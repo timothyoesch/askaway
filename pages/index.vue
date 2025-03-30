@@ -70,7 +70,7 @@ onMounted(() => {
             v-model="event.title"
             class="w-[-webkit-fill-available] border-b-2 border-secondary bg-transparent focus:outline-none transition-colors duration-100"
           />
-          <button type="submit" class="ask-button" href="#">
+          <button type="submit" class="ask-button w-full md:w-fit text-lg md:text-xl" href="#">
             Session starten
             <RocketLaunchIcon />
           </button>

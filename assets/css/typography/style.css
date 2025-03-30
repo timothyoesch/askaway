@@ -1,5 +1,6 @@
 @import "./fonts.css";
+
 html {
-    font-size: clamp(15px, 1.041666666666667vw, 22px);
+    font-size: clamp(18px, 1.041666666666667vw, 22px);
     @apply font-biorhyme
 }

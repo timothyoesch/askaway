@@ -191,14 +191,14 @@ const copyLink = (uuid) => {
 </script>
 
 <template>
-    <div v-if="data.event" class="mb-20">
-        <div class="ask-event-questions ask-container mt-10">
+    <div v-if="data.event" class="mb-10 mt-4">
+        <div class="ask-event-questions ask-container">
             <div class="ask-event-moderation-buttons flex gap-4 mb-8">
-                <a href="#" class="text-secondary text-sm md:text-lg cursor-pointer ask-button w-fit "
+                <a href="#" class="text-secondary md:text-lg cursor-pointer ask-button w-fit "
                     @click="copyLink(data.event.uuid)">
                     Eventlink kopieren
                 </a>
-                <a href="#" class="text-secondary text-sm md:text-lg cursor-pointer ask-button w-fit !bg-red-900 !text-white"
+                <a href="#" class="text-secondary md:text-lg cursor-pointer ask-button w-fit !bg-red-900 !text-white"
                     @click="changeEventStatus(data.event.id, 'deleted')">
                     Event löschen
                 </a>
@@ -208,13 +208,13 @@ const copyLink = (uuid) => {
                     Fragen moderation
                 </h2>
                 <div class="ask-event-questions__header__sort">
-                    <span class="text-secondary text-sm md:text-lg cursor-pointer underline"
+                    <span class="text-secondary md:text-lg cursor-pointer underline"
                         @click="sortQuestions('likes')" id="sort-likes">Meiste Likes</span>
                     |
-                    <span class="text-secondary text-sm md:text-lg cursor-pointer" @click="sortQuestions('newest')"
+                    <span class="text-secondary md:text-lg cursor-pointer" @click="sortQuestions('newest')"
                         id="sort-newest"> Neueste</span>
                     |
-                    <span class="text-secondary text-sm md:text-lg cursor-pointer" @click="sortQuestions('moderation')"
+                    <span class="text-secondary md:text-lg cursor-pointer" @click="sortQuestions('moderation')"
                         id="sort-moderation"> Moderation</span>
                 </div>
             </div>
@@ -231,18 +231,18 @@ const copyLink = (uuid) => {
                         </p>
                     </div>
                 </div>
-                <div class="flex gap-8 items-center mt-4">
-                    <a href="#" class="text-sm text-primary font-bold underline text-green-800"
+                <div class="flex gap-4 md:gap-8 items-center mt-4">
+                    <a href="#" class="text-sm text-primary font-bold ask-button !bg-green-800 !text-white"
                         @click.prevent="changeQuestionStatus(question.id, 'approved')"
                         v-if="question.approved_at === null || question.approved_at === ''">
                         Freischalten
                     </a>
-                    <a href="#" class="text-sm text-primary font-bold underline text-green-800"
+                    <a href="#" class="text-sm text-primary font-bold ask-button !bg-green-800 !text-white"
                         @click.prevent="changeQuestionStatus(question.id, 'answered')"
                         v-else-if="question.approved_at !== null && (question.answered_at === null || question.answered_at === '')">
                         Beantwortet
                     </a>
-                    <a href="#" class="text-sm text-primary font-bold underline text-red-800"
+                    <a href="#" class="text-sm text-primary font-bold ask-button !bg-red-800 !text-white"
                         @click.prevent="changeQuestionStatus(question.id, 'rejected')">
                         Löschen
                     </a>

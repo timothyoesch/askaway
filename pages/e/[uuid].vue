@@ -316,14 +316,14 @@ onUnmounted(() => {
             </div>
         </div>
         <div class="ask-event-questions ask-container mt-10">
-            <div class="ask-event-questions__header flex justify-between items-end mb-4 md:mb-8">
+            <div class="ask-event-questions__header flex flex-col md:flex-row justify-between items-start md:items-end mb-4 md:mb-8">
                 <h2 class="text-2xl md:text-4xl font-bold font-allan text-secondary">
                     Offene Fragen
                 </h2>
                 <div class="ask-event-questions__header__sort">
-                    <span class="text-secondary text-sm md:text-lg cursor-pointer underline" @click="sortQuestions('likes')" id="sort-likes">Meiste Likes</span>
+                    <span class="text-secondary md:text-lg cursor-pointer underline" @click="sortQuestions('likes')" id="sort-likes">Meiste Likes</span>
                     |
-                    <span class="text-secondary text-sm md:text-lg cursor-pointer" @click="sortQuestions('newest')" id="sort-newest"> Neueste</span>
+                    <span class="text-secondary md:text-lg cursor-pointer" @click="sortQuestions('newest')" id="sort-newest"> Neueste</span>
                 </div>
             </div>
             <div v-for="question in data.questions" :id="question.id" v-bind:key="question.id" class="p-4 md:p-6 bg-secondary/10 mb-4 flex justify-between items-start gap-4 md:gap-8 rounded-md">
@@ -342,7 +342,7 @@ onUnmounted(() => {
         <div class="ask-event-form py-8 md:py-16 bg-white/50 sticky bottom-0 z-10 backdrop-blur-sm">
             <div class="ask-container">
                 <form action="/ask" class="md:text-xl" @submit.prevent="submitNewQuestion">
-                    <div class="flex gap-4 items-end">
+                    <div class="flex flex-col md:flex-row gap-4 items-end">
                         <textarea
                             type="text"
                             name="content"
@@ -350,7 +350,7 @@ onUnmounted(() => {
                             v-model="newQuestion.content"
                             class="w-[-webkit-fill-available] border-b-2 border-secondary bg-transparent focus:outline-none transition-colors duration-100"
                         />
-                        <button type="submit" class="ask-button" href="#">
+                        <button type="submit" class="ask-button w-full md:w-fit text-lg md:text-xl" href="#">
                             Frage stellen
                         </button>
                     </div>
