@@ -99,12 +99,11 @@ onMounted(async () => {
 
     useSeoMeta({
         title: `Ask Away! - Fragen moderieren für ${data.event.name}`,
-        meta: [
-            {
-                name: 'description',
-                content: `Moderation für ${data.event.name}`,
-            },
-        ],
+        ogTitle: `Ask Away! - Fragen moderieren für ${data.event.name}`,
+        description: data.event.description || "Ask Away! ist ein kostenloses, simples und tracking-freies Tool für Live Q&A-Sessions.",
+        ogDescription: data.event.description || "Ask Away! ist ein kostenloses, simples und tracking-freies Tool für Live Q&A-Sessions.",
+        ogImage: '/og.png',
+        twitterCard: 'summary_large_image',
     });
 });
 

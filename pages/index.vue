@@ -28,14 +28,12 @@ const submit = async () => {
     })
 };
 useSeoMeta({
-  title: "Ask Away! - Kostenloses, simples und tracking-freies Tool für Live Q&A-Sessions",
-  meta: [
-    {
-      name: "description",
-      content:
-        "Ask Away! ist ein kostenloses, simples und tracking-freies Tool für Live Q&A-Sessions.",
-    },
-  ],
+    title: "AskAway!",
+    ogTitle: "AskAway!",
+    description: "Ask Away! - Kostenloses, simples und tracking-freies Tool für Live Q&A-Sessions",
+    ogDescription: "Ask Away! - Kostenloses, simples und tracking-freies Tool für Live Q&A-Sessions",
+    ogImage: '/og.png',
+    twitterCard: 'summary_large_image',
 });
 </script>
 

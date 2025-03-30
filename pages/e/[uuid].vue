@@ -162,12 +162,11 @@ onMounted(async () => {
 
     useSeoMeta({
         title: "AskAway! – " + data.event.name,
-        meta: [
-            {
-                name: "description",
-                content: data.event.description || "Ask Away! ist ein kostenloses, simples und tracking-freies Tool für Live Q&A-Sessions.",
-            },
-        ],
+        ogTitle: "AskAway! – " + data.event.name,
+        description: data.event.description || "Ask Away! ist ein kostenloses, simples und tracking-freies Tool für Live Q&A-Sessions.",
+        ogDescription: data.event.description || "Ask Away! ist ein kostenloses, simples und tracking-freies Tool für Live Q&A-Sessions.",
+        ogImage: '/og.png',
+        twitterCard: 'summary_large_image',
     });
 });
 
