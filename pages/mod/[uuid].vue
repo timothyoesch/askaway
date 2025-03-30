@@ -1,7 +1,8 @@
 <script setup>
 import PocketBase from 'pocketbase';
-import {ref, onMounted} from 'vue';
+import {ref, onMounted, onUnmounted} from 'vue';
 import {HandThumbUpIcon as SolidIcon} from '@heroicons/vue/24/solid';
+import { Toaster, toast } from 'vue-sonner'
 
 const route = useRoute();
 const config = useRuntimeConfig();
@@ -95,6 +96,25 @@ onMounted(async () => {
     subscriptions.event = await subScribeToEvent(data.event.id);
     data.questions = await getQuestions(data.event);
     subscriptions.questions = await subscribeToQuestions(data.event.id);
+
+    useSeoMeta({
+        title: `Ask Away! - Fragen moderieren für ${data.event.name}`,
+        meta: [
+            {
+                name: 'description',
+                content: `Moderation für ${data.event.name}`,
+            },
+        ],
+    });
+});
+
+onUnmounted(() => {
+    if (subscriptions.value.event) {
+        pb.collection('events').unsubscribe(subscriptions.value.event);
+    }
+    if (subscriptions.value.questions) {
+        pb.collection('questions').unsubscribe(subscriptions.value.questions);
+    }
 });
 
 const changeStatus = async (questionId, status) => {
@@ -146,11 +166,29 @@ const sortQuestions = (sort) => {
     }
 };
 
+const copyLink = (uuid) => {
+    const link = `${window.location.origin}/e/${uuid}`;
+    navigator.clipboard.writeText(link).then(() => {
+        toast.success('Link kopiert', {
+            duration: 2000,
+            position: 'top-right',
+        });
+    }).catch((err) => {
+        console.error('Error copying link: ', err);
+    });
+};
+
 </script>
 
 <template>
     <div v-if="data.event" class="mb-20">
         <div class="ask-event-questions ask-container mt-10">
+            <a href="#"
+                class="text-secondary text-sm md:text-lg cursor-pointer ask-button w-fit mb-4"
+                @click="copyLink(data.event.uuid)"
+            >
+                Eventlink kopieren
+            </a>
             <div class="ask-event-questions__header flex justify-between items-end mb-4 md:mb-8">
                 <h2 class="text-2xl md:text-4xl font-bold font-allan text-secondary">
                     Fragen moderation
@@ -202,5 +240,6 @@ const sortQuestions = (sort) => {
                 </div>
             </div>
         </div>
+        <Toaster />
     </div>
 </template>

@@ -24,10 +24,19 @@ const submit = async () => {
     moderated: true
   })
     .then((res) => {
-        navigateTo(`/e/${res.uuid}`);
+        navigateTo(`/mod/${res.uuid}?moderation_uuid=${res.moderation_uuid}`);
     })
 };
-
+useSeoMeta({
+  title: "Ask Away! - Kostenloses, simples und tracking-freies Tool für Live Q&A-Sessions",
+  meta: [
+    {
+      name: "description",
+      content:
+        "Ask Away! ist ein kostenloses, simples und tracking-freies Tool für Live Q&A-Sessions.",
+    },
+  ],
+});
 </script>
 
 <template>

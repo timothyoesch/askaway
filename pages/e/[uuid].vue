@@ -1,24 +1,25 @@
 <script setup>
 const config = useRuntimeConfig();
 import PocketBase from 'pocketbase';
-import { onMounted, reactive, ref } from 'vue';
-import {HandThumbUpIcon as Icon} from '@heroicons/vue/24/outline';
+import { onMounted, reactive, ref, onUnmounted } from 'vue';
+import {HandThumbUpIcon as Icon, UserGroupIcon} from '@heroicons/vue/24/outline';
 import {HandThumbUpIcon as SolidIcon} from '@heroicons/vue/24/solid';
 import { Toaster, toast } from 'vue-sonner'
 import { v4 as uuidv4 } from 'uuid';
 const route = useRoute();
-// const pb = new PocketBase('https://pocketbase.pb-askaway.orb.local');
 const pb = new PocketBase(config.public.pb_base);
 
 const data = reactive({
     event: null,
     questions: [],
+    participants: [],
     sort : 'likes'
 });
 
 const subscriptions = ref({
     event: null,
-    questions: null
+    questions: null,
+    participants: null,
 });
 
 const newQuestion = reactive({
@@ -96,24 +97,59 @@ const subscribeToQuestions = async (event) => {
     })
 };
 
+const getParticipants = async (event) => {
+    try {
+        const res = await pb.collection('participants').getList(1, 5000, {
+            filter: `event_id="${event.id}"`,
+        });
+        return res.items;
+    } catch (err) {
+        console.error(err);
+        navigateTo('/404');
+    }
+};
+
+const subscribeToParticipants = async (event) => {
+    pb.collection('participants').subscribe("*", (e) => {
+        if (e.record.event_id !== event) {
+            return;
+        }
+        if (e.action === 'create') {
+            data.participants.push(e.record);
+        } else if (e.action === 'update') {
+            const index = data.participants.findIndex((p) => p.id === e.record.id);
+            if (index !== -1) {
+                data.participants[index] = e.record;
+            }
+        } else if (e.action === 'delete') {
+            const index = data.participants.findIndex((p) => p.id === e.record.id);
+            if (index !== -1) {
+                data.participants.splice(index, 1);
+            }
+        }
+    })
+};
+
 onMounted(async () => {
     const { uuid } = route.params;
     data.event = await getEvent(uuid);
     subscriptions.event = await subScribeToEvent(data.event.id);
     data.questions = await getQuestions(data.event);
     subscriptions.questions = await subscribeToQuestions(data.event.id);
+    data.participants = await getParticipants(data.event);
+    subscriptions.participants = await subscribeToParticipants(data.event.id);
 
     // Check if participant_id exists in local storage
-    const participantId = localStorage.getItem('participant_id');
+    const participantId = localStorage.getItem(data.event.id + '_participant_id');
     if (!participantId) {
         const participant = await pb.collection('participants').create({
             event_id: data.event.id,
             uuid: uuidv4(),
         });
-        localStorage.setItem('participant_id', participant.id);
+        localStorage.setItem(data.event.id + '_participant_id', participant.id);
     }
 
-    likes.value = JSON.parse(localStorage.getItem('likes')) || [];
+    likes.value = JSON.parse(localStorage.getItem(data.event.id + '_likes')) || [];
 
     // Autosize all textareas
     const textareas = document.querySelectorAll('textarea');
@@ -122,6 +158,16 @@ onMounted(async () => {
             textarea.style.height = 'auto';
             textarea.style.height = `${textarea.scrollHeight}px`;
         });
+    });
+
+    useSeoMeta({
+        title: "AskAway! – " + data.event.name,
+        meta: [
+            {
+                name: "description",
+                content: data.event.description || "Ask Away! ist ein kostenloses, simples und tracking-freies Tool für Live Q&A-Sessions.",
+            },
+        ],
     });
 });
 
@@ -155,7 +201,7 @@ const sortQuestions = (sort) => {
 };
 
 const toggleLike = async (question) => {
-    const participantId = localStorage.getItem('participant_id');
+    const participantId = localStorage.getItem(data.event.id + '_participant_id');
     if (!participantId) {
         alert('Bitte lade die Seite neu.');
         return;
@@ -183,12 +229,12 @@ const toggleLike = async (question) => {
             likes: [...question.likes, like.id],
         });
     }
-    localStorage.setItem('likes', JSON.stringify(likes.value));
+    localStorage.setItem(data.event.id + '_likes', JSON.stringify(likes.value));
     sortQuestions(data.sort);
 };
 
 const submitNewQuestion = async () => {
-    const participantId = localStorage.getItem('participant_id');
+    const participantId = localStorage.getItem(data.event.id + '_participant_id');
     if (!participantId) {
         alert('Bitte lade die Seite neu.');
         return;
@@ -220,6 +266,18 @@ const submitNewQuestion = async () => {
     toast.success(toastMessage, toastOptions);
 };
 
+onUnmounted(() => {
+    if (subscriptions.value.event) {
+        pb.collection('events').unsubscribe(subscriptions.value.event);
+    }
+    if (subscriptions.value.questions) {
+        pb.collection('questions').unsubscribe(subscriptions.value.questions);
+    }
+
+    if (subscriptions.value.participants) {
+        pb.collection('participants').unsubscribe(subscriptions.value.participants);
+    }
+});
 </script>
 
 <template>
@@ -252,6 +310,10 @@ const submitNewQuestion = async () => {
                 </h1>
                 <p class="event-description mt-4 text-lg md:text-2xl" v-if="data.event.description" v-html="data.event.description">
                 </p>
+                <div class="event-participants mt-4 flex justify-center items-center gap-2">
+                    {{ data.participants.length }}
+                    <UserGroupIcon class="h-6 w-6 text-secondary" />
+                </div>
             </div>
         </div>
         <div class="ask-event-questions ask-container mt-10">
