@@ -307,7 +307,7 @@ onUnmounted(() => {
                 <h1 class="event-title mt-2 text-4xl md:text-6xl font-bold font-allan">
                     {{ data.event.name }}
                 </h1>
-                <p class="event-description mt-4 text-lg md:text-2xl" v-if="data.event.description" v-html="data.event.description">
+                <p class="event-description mt-4 md:text-lg md:text-2xl" v-if="data.event.description" v-html="data.event.description">
                 </p>
                 <div class="event-participants mt-4 flex justify-center items-center gap-2">
                     {{ data.participants.length }}
