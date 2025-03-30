@@ -9,6 +9,8 @@ import { v4 as uuidv4 } from 'uuid';
 const route = useRoute();
 const pb = new PocketBase(config.public.pb_base);
 
+const { hideform } = route.query;
+
 const data = reactive({
     event: null,
     questions: [],
@@ -282,13 +284,6 @@ onUnmounted(() => {
         pb.collection('participants').unsubscribe(subscriptions.value.participants);
     }
 });
-
-const toggleForm = () => {
-    const form = document.querySelector('.ask-event-form');
-    if (form) {
-        form.classList.toggle('hidden');
-    }
-};
 </script>
 
 <template>
@@ -328,7 +323,7 @@ const toggleForm = () => {
                 </div>
             </div>
         </div>
-        <div class="ask-event-form ask-container">
+        <div class="ask-event-form ask-container" v-if="typeof hideform === 'undefined'">
             <div class="pt-10 ask-event-form__inner">
                 <form action="/ask" class="md:text-xl" @submit.prevent="submitNewQuestion">
                     <div class="flex flex-col md:flex-row gap-4 items-end">
@@ -341,11 +336,6 @@ const toggleForm = () => {
                     </div>
                 </form>
             </div>
-            <a href="#"
-                class="text-secondary underline text-sm block mt-2 opacity-25 hover:opacity-100 transition-opacity duration-100"
-                @click="toggleForm">
-                Formular ausblenden
-            </a>
         </div>
         <div class="ask-event-questions ask-container mt-10">
             <div
