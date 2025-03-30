@@ -256,7 +256,6 @@ const submitNewQuestion = async () => {
     const textarea = document.querySelector('textarea');
     if (textarea) {
         textarea.style.height = 'auto';
-        textarea.style.height = `${textarea.scrollHeight}px`;
     }
     let toastOptions = {
         duration: 20000,
@@ -283,6 +282,13 @@ onUnmounted(() => {
         pb.collection('participants').unsubscribe(subscriptions.value.participants);
     }
 });
+
+const toggleForm = () => {
+    const form = document.querySelector('.ask-event-form');
+    if (form) {
+        form.classList.toggle('hidden');
+    }
+};
 </script>
 
 <template>
@@ -292,20 +298,20 @@ onUnmounted(() => {
                 <div class="event-datetime" v-if="data.event.start_time">
                     <p>
                         {{
-                            new Date(data.event.start_time)
-                                .toLocaleDateString("de", {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                })
+                        new Date(data.event.start_time)
+                        .toLocaleDateString("de", {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        })
                         }}
                         |
                         {{
-                            new Date(data.event.start_time)
-                                .toLocaleTimeString("de", {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                })
+                        new Date(data.event.start_time)
+                        .toLocaleTimeString("de", {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        })
                         }}
                         Uhr
                     </p>
@@ -313,7 +319,8 @@ onUnmounted(() => {
                 <h1 class="event-title mt-2 text-4xl md:text-6xl font-bold font-allan">
                     {{ data.event.name }}
                 </h1>
-                <p class="event-description mt-2 md:text-lg md:text-2xl" v-if="data.event.description" v-html="data.event.description">
+                <p class="event-description mt-2 md:text-lg md:text-2xl" v-if="data.event.description"
+                    v-html="data.event.description">
                 </p>
                 <div class="event-participants mt-4 flex justify-center items-center gap-2">
                     {{ data.participants.length }}
@@ -321,46 +328,52 @@ onUnmounted(() => {
                 </div>
             </div>
         </div>
-        <div class="ask-event-questions ask-container mt-10">
-            <div class="ask-event-questions__header flex flex-col md:flex-row justify-between items-start md:items-end mb-4 md:mb-8">
-                <h2 class="text-2xl md:text-4xl font-bold font-allan text-secondary">
-                    Offene Fragen
-                </h2>
-                <div class="ask-event-questions__header__sort">
-                    <span class="text-secondary md:text-lg cursor-pointer underline" @click="sortQuestions('likes')" id="sort-likes">Meiste Likes</span>
-                    |
-                    <span class="text-secondary md:text-lg cursor-pointer" @click="sortQuestions('newest')" id="sort-newest"> Neueste</span>
-                </div>
-            </div>
-            <div v-for="question in data.questions" :id="question.id" v-bind:key="question.id" class="p-4 md:p-6 bg-secondary/10 mb-4 flex justify-between items-start gap-4 md:gap-8 rounded-md">
-                <p>
-                    {{ question.content }}
-                </p>
-                <div class="ask-event-questions__likes flex flex-col items-center">
-                    <SolidIcon v-if="likes.includes(question.id)" @click="toggleLike(question)" class="cursor-pointer h-6 w-6 text-secondary" />
-                    <Icon v-else @click="toggleLike(question)" class="cursor-pointer h-6 w-6 text-secondary" />
-                    <p class="text-lg font-bold text-secondary">
-                        {{ question.likes.length }}
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="ask-event-form py-8 md:py-16 bg-white/50 sticky bottom-0 z-10 backdrop-blur-sm">
-            <div class="ask-container">
+        <div class="ask-event-form ask-container">
+            <div class="pt-10 ask-event-form__inner">
                 <form action="/ask" class="md:text-xl" @submit.prevent="submitNewQuestion">
                     <div class="flex flex-col md:flex-row gap-4 items-end">
-                        <textarea
-                            type="text"
-                            name="content"
-                            placeholder="Wie lautet deine Frage?"
+                        <textarea type="text" name="content" placeholder="Wie lautet deine Frage?"
                             v-model="newQuestion.content"
-                            class="w-[-webkit-fill-available] border-b-2 border-secondary bg-transparent focus:outline-none transition-colors duration-100"
-                        />
+                            class="w-[-webkit-fill-available] border-b-2 border-secondary bg-transparent focus:outline-none transition-colors duration-100" />
                         <button type="submit" class="ask-button w-full md:w-fit text-lg md:text-xl" href="#">
                             Frage stellen
                         </button>
                     </div>
                 </form>
+            </div>
+            <a href="#"
+                class="text-secondary underline text-sm block mt-2 opacity-25 hover:opacity-100 transition-opacity duration-100"
+                @click="toggleForm">
+                Formular ausblenden
+            </a>
+        </div>
+        <div class="ask-event-questions ask-container mt-10">
+            <div
+                class="ask-event-questions__header flex flex-col md:flex-row justify-between items-start md:items-end mb-4 md:mb-8">
+                <h2 class="text-2xl md:text-4xl font-bold font-allan text-secondary">
+                    Offene Fragen
+                </h2>
+                <div class="ask-event-questions__header__sort">
+                    <span class="text-secondary md:text-lg cursor-pointer underline" @click="sortQuestions('likes')"
+                        id="sort-likes">Meiste Likes</span>
+                    |
+                    <span class="text-secondary md:text-lg cursor-pointer" @click="sortQuestions('newest')"
+                        id="sort-newest"> Neueste</span>
+                </div>
+            </div>
+            <div v-for="question in data.questions" :id="question.id" v-bind:key="question.id"
+                class="p-4 md:p-6 bg-secondary/10 mb-4 flex justify-between items-start gap-4 md:gap-8 rounded-md">
+                <p>
+                    {{ question.content }}
+                </p>
+                <div class="ask-event-questions__likes flex flex-col items-center">
+                    <SolidIcon v-if="likes.includes(question.id)" @click="toggleLike(question)"
+                        class="cursor-pointer h-6 w-6 text-secondary" />
+                    <Icon v-else @click="toggleLike(question)" class="cursor-pointer h-6 w-6 text-secondary" />
+                    <p class="text-lg font-bold text-secondary">
+                        {{ question.likes.length }}
+                    </p>
+                </div>
             </div>
         </div>
         <Toaster />
