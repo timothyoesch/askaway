@@ -35,6 +35,16 @@ useSeoMeta({
     ogImage: '/og.png',
     twitterCard: 'summary_large_image',
 });
+
+onMounted(() => {
+  // Make h-screen actually screen height
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    window.addEventListener('resize', () => {
+      vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    });
+});
 </script>
 
 <template>
@@ -42,8 +52,8 @@ useSeoMeta({
     class="h-screen bg-accent text-secondary p-4 md:p-12 flex flex-col items-center justify-center"
   >
     <div class="max-w-[1080px] w-full text-center">
-      <h1 class="font-allan text-4xl md:text-9xl font-bold">Ask Away!</h1>
-      <p class="text-2xl mt-4">
+      <h1 class="font-allan text-7xl md:text-9xl font-bold">Ask Away!</h1>
+      <p class="text-xl md:text-2xl mt-4">
         Kostenloses, simples und tracking-freies Tool für Live Q&A-Sessions.
       </p>
       <form
@@ -52,11 +62,11 @@ useSeoMeta({
         ref="initForm"
         @submit.prevent="submit"
       >
-        <div class="flex gap-4">
+        <div class="flex flex-col md:flex-row gap-4">
           <input
             type="text"
             name="title"
-            placeholder="Wie lautet der Titel deiner Veranstaltung?"
+            placeholder="Titel der Session"
             v-model="event.title"
             class="w-[-webkit-fill-available] border-b-2 border-secondary bg-transparent focus:outline-none transition-colors duration-100"
           />
@@ -69,3 +79,9 @@ useSeoMeta({
     </div>
   </div>
 </template>
+
+<style scoped>
+.h-screen {
+  height: calc(var(--vh, 1vh) * 100);
+}
+</style>

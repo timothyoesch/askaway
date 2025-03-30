@@ -304,7 +304,7 @@ onUnmounted(() => {
                         Uhr
                     </p>
                 </div>
-                <h1 class="event-title mt-2 text-3xl md:text-6xl font-bold font-allan">
+                <h1 class="event-title mt-2 text-4xl md:text-6xl font-bold font-allan">
                     {{ data.event.name }}
                 </h1>
                 <p class="event-description mt-4 text-lg md:text-2xl" v-if="data.event.description" v-html="data.event.description">
@@ -341,7 +341,7 @@ onUnmounted(() => {
         </div>
         <div class="ask-event-form py-8 md:py-16 bg-white/50 sticky bottom-0 z-10 backdrop-blur-sm">
             <div class="ask-container">
-                <form action="/ask" class="text-xl" @submit.prevent="submitNewQuestion">
+                <form action="/ask" class="md:text-xl" @submit.prevent="submitNewQuestion">
                     <div class="flex gap-4 items-end">
                         <textarea
                             type="text"

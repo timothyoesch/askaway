@@ -116,7 +116,7 @@ onUnmounted(() => {
     }
 });
 
-const changeStatus = async (questionId, status) => {
+const changeQuestionStatus = async (questionId, status) => {
     try {
         const question = await pb.collection('questions').getOne(questionId);
         if (status === 'approved') {
@@ -129,6 +129,17 @@ const changeStatus = async (questionId, status) => {
             await pb.collection('questions').update(questionId, question);
         }
         sortQuestions(data.sort);
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+const changeEventStatus = async (eventId, status) => {
+    try {
+        if (status === 'deleted') {
+            pb.collection('events').delete(eventId);
+            navigateTo('/');
+        }
     } catch (err) {
         console.error(err);
     }
@@ -182,25 +193,33 @@ const copyLink = (uuid) => {
 <template>
     <div v-if="data.event" class="mb-20">
         <div class="ask-event-questions ask-container mt-10">
-            <a href="#"
-                class="text-secondary text-sm md:text-lg cursor-pointer ask-button w-fit mb-4"
-                @click="copyLink(data.event.uuid)"
-            >
-                Eventlink kopieren
-            </a>
-            <div class="ask-event-questions__header flex justify-between items-end mb-4 md:mb-8">
+            <div class="ask-event-moderation-buttons flex gap-4 mb-8">
+                <a href="#" class="text-secondary text-sm md:text-lg cursor-pointer ask-button w-fit "
+                    @click="copyLink(data.event.uuid)">
+                    Eventlink kopieren
+                </a>
+                <a href="#" class="text-secondary text-sm md:text-lg cursor-pointer ask-button w-fit !bg-red-900 !text-white"
+                    @click="changeEventStatus(data.event.id, 'deleted')">
+                    Event löschen
+                </a>
+            </div>
+            <div class="ask-event-questions__header flex flex-col md:flex-row justify-between items-start md:items-end mb-4 md:mb-8">
                 <h2 class="text-2xl md:text-4xl font-bold font-allan text-secondary">
                     Fragen moderation
                 </h2>
                 <div class="ask-event-questions__header__sort">
-                    <span class="text-secondary text-sm md:text-lg cursor-pointer underline" @click="sortQuestions('likes')" id="sort-likes">Meiste Likes</span>
+                    <span class="text-secondary text-sm md:text-lg cursor-pointer underline"
+                        @click="sortQuestions('likes')" id="sort-likes">Meiste Likes</span>
                     |
-                    <span class="text-secondary text-sm md:text-lg cursor-pointer" @click="sortQuestions('newest')" id="sort-newest"> Neueste</span>
+                    <span class="text-secondary text-sm md:text-lg cursor-pointer" @click="sortQuestions('newest')"
+                        id="sort-newest"> Neueste</span>
                     |
-                    <span class="text-secondary text-sm md:text-lg cursor-pointer" @click="sortQuestions('moderation')" id="sort-moderation"> Moderation</span>
+                    <span class="text-secondary text-sm md:text-lg cursor-pointer" @click="sortQuestions('moderation')"
+                        id="sort-moderation"> Moderation</span>
                 </div>
             </div>
-            <div v-for="question in data.questions" :id="question.id" v-bind:key="question.id" class="p-4 md:p-6 bg-secondary/10 mb-4 rounded-md">
+            <div v-for="question in data.questions" :id="question.id" v-bind:key="question.id"
+                class="p-4 md:p-6 bg-secondary/10 mb-4 rounded-md">
                 <div class="flex justify-between items-start gap-4 md:gap-8">
                     <p>
                         {{ question.content }}
@@ -213,27 +232,18 @@ const copyLink = (uuid) => {
                     </div>
                 </div>
                 <div class="flex gap-8 items-center mt-4">
-                    <a
-                        href="#"
-                        class="text-sm text-primary font-bold underline text-green-800"
-                        @click.prevent="changeStatus(question.id, 'approved')"
-                        v-if="question.approved_at === null || question.approved_at === ''"
-                    >
+                    <a href="#" class="text-sm text-primary font-bold underline text-green-800"
+                        @click.prevent="changeQuestionStatus(question.id, 'approved')"
+                        v-if="question.approved_at === null || question.approved_at === ''">
                         Freischalten
                     </a>
-                    <a
-                        href="#"
-                        class="text-sm text-primary font-bold underline text-green-800"
-                        @click.prevent="changeStatus(question.id, 'answered')"
-                        v-else-if="question.approved_at !== null && (question.answered_at === null || question.answered_at === '')"
-                    >
+                    <a href="#" class="text-sm text-primary font-bold underline text-green-800"
+                        @click.prevent="changeQuestionStatus(question.id, 'answered')"
+                        v-else-if="question.approved_at !== null && (question.answered_at === null || question.answered_at === '')">
                         Beantwortet
                     </a>
-                    <a
-                        href="#"
-                        class="text-sm text-primary font-bold underline text-red-800"
-                        @click.prevent="changeStatus(question.id, 'rejected')"
-                    >
+                    <a href="#" class="text-sm text-primary font-bold underline text-red-800"
+                        @click.prevent="changeQuestionStatus(question.id, 'rejected')">
                         Löschen
                     </a>
                 </div>
