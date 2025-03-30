@@ -252,6 +252,12 @@ const submitNewQuestion = async () => {
         data.questions.push(question);
     }
     newQuestion.content = null;
+    // Reset textarea height
+    const textarea = document.querySelector('textarea');
+    if (textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    }
     let toastOptions = {
         duration: 20000,
         position: 'top-right',
