@@ -132,6 +132,30 @@ const subscribeToParticipants = async (event) => {
     })
 };
 
+const checkParticipantId = async (event) => {
+    const participantId = localStorage.getItem(event.id + '_participant_id');
+    if (!participantId) {
+        const participant = await pb.collection('participants').create({
+            event_id: event.id,
+            uuid: uuidv4(),
+        });
+        localStorage.setItem(event.id + '_participant_id', participant.id);
+    } else {
+        // Check if participant exists in PocketBase
+        try {
+            const participant = await pb.collection('participants').getOne(participantId);
+        } catch (err) {
+            // If not, create a new participant
+            const participant = await pb.collection('participants').create({
+                event_id: event.id,
+                uuid: uuidv4(),
+            });
+            localStorage.setItem(event.id + '_participant_id', participant.id);
+        }
+    }
+    return participantId;
+};
+
 onMounted(async () => {
     const { uuid } = route.params;
     data.event = await getEvent(uuid);
@@ -142,14 +166,7 @@ onMounted(async () => {
     subscriptions.participants = await subscribeToParticipants(data.event.id);
 
     // Check if participant_id exists in local storage
-    const participantId = localStorage.getItem(data.event.id + '_participant_id');
-    if (!participantId) {
-        const participant = await pb.collection('participants').create({
-            event_id: data.event.id,
-            uuid: uuidv4(),
-        });
-        localStorage.setItem(data.event.id + '_participant_id', participant.id);
-    }
+    await checkParticipantId(data.event);
 
     likes.value = JSON.parse(localStorage.getItem(data.event.id + '_likes')) || [];
 
@@ -202,22 +219,15 @@ const sortQuestions = (sort) => {
 };
 
 const toggleLike = async (question) => {
-    const participantId = localStorage.getItem(data.event.id + '_participant_id');
-    if (!participantId) {
-        alert('Bitte lade die Seite neu.');
-        return;
-    }
+    let participantId = await checkParticipantId(data.event);
     if (likes.value.includes(question.id)) {
         likes.value.splice(likes.value.indexOf(question.id), 1);
-        // Delete like in PocketBase
-        const like = question.likes.find((like) => like.participant_id === participantId);
-        if (like) {
+        try {
+            const like = await pb.collection('likes').getFirstListItem(`question_id="${question.id}" && participant_id="${participantId}"`);
             await pb.collection('likes').delete(like.id);
+        } catch (err) {
+            // Like likely never existed
         }
-        // Detach like from question in PocketBase
-        pb.collection('questions').update(question.id, {
-            likes: question.likes.filter((like) => like.id !== like.id),
-        });
     } else {
         likes.value.push(question.id);
         // Create new like in PocketBase
@@ -235,11 +245,7 @@ const toggleLike = async (question) => {
 };
 
 const submitNewQuestion = async () => {
-    const participantId = localStorage.getItem(data.event.id + '_participant_id');
-    if (!participantId) {
-        alert('Bitte lade die Seite neu.');
-        return;
-    }
+    let participantId = await checkParticipantId(data.event);
     if (!newQuestion.content) {
         alert('Bitte gib eine Frage ein.');
         return;
