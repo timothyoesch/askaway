@@ -1,7 +1,7 @@
 <script setup>
 import PocketBase from 'pocketbase';
 import {ref, onMounted, onUnmounted} from 'vue';
-import {HandThumbUpIcon as SolidIcon} from '@heroicons/vue/24/solid';
+import {HandThumbUpIcon as SolidIcon, StarIcon} from '@heroicons/vue/24/solid';
 import { Toaster, toast } from 'vue-sonner'
 
 const route = useRoute();
@@ -127,6 +127,12 @@ const changeQuestionStatus = async (questionId, status) => {
         } else if (status === 'answered') {
             question.answered_at = new Date().toISOString();
             await pb.collection('questions').update(questionId, question);
+        } else if (status === 'pinned') {
+            question.pinned = true;
+            await pb.collection('questions').update(questionId, question);
+        } else if (status === 'unpinned') {
+            question.pinned = false;
+            await pb.collection('questions').update(questionId, question);
         }
         sortQuestions(data.sort);
     } catch (err) {
@@ -174,6 +180,15 @@ const sortQuestions = (sort) => {
     if (newButton) {
         newButton.classList.add('underline');
     }
+    data.questions.sort((a, b) => {
+        if (a.pinned === b.pinned) {
+            return 0;
+        } else if (a.pinned === true) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
 };
 
 const copyLink = (uuid) => {
@@ -219,7 +234,11 @@ const copyLink = (uuid) => {
                 </div>
             </div>
             <div v-for="question in data.questions" :id="question.id" v-bind:key="question.id"
-                class="p-4 md:p-6 bg-secondary/10 mb-4 rounded-md">
+                class="p-4 md:p-6 bg-secondary/10 mb-4 rounded-md relative"
+                :class="{
+                    'border-secondary border-2': question.pinned === true
+                }"
+            >
                 <div class="flex justify-between items-start gap-4 md:gap-8">
                     <p>
                         {{ question.content }}
@@ -231,22 +250,36 @@ const copyLink = (uuid) => {
                         </p>
                     </div>
                 </div>
-                <div class="flex gap-4 md:gap-8 items-center mt-4">
-                    <a href="#" class="text-sm text-primary font-bold ask-button !bg-green-800 !text-white"
+                <div class="flex gap-2 items-center mt-4">
+                    <a href="#" class="text-sm text-primary ask-button !bg-green-800 !text-white"
                         @click.prevent="changeQuestionStatus(question.id, 'approved')"
                         v-if="question.approved_at === null || question.approved_at === ''">
                         Freischalten
                     </a>
-                    <a href="#" class="text-sm text-primary font-bold ask-button !bg-green-800 !text-white"
+                    <a href="#" class="text-sm text-primary ask-button !bg-green-800 !text-white"
                         @click.prevent="changeQuestionStatus(question.id, 'answered')"
                         v-else-if="question.approved_at !== null && (question.answered_at === null || question.answered_at === '')">
                         Beantwortet
                     </a>
-                    <a href="#" class="text-sm text-primary font-bold ask-button !bg-red-800 !text-white"
+                    <a href="#" class="text-sm text-primary ask-button !bg-green-800 !text-white"
+                        @click.prevent="changeQuestionStatus(question.id, 'pinned')"
+                        v-if="question.pinned != true">
+                        Anheften
+                    </a>
+                    <a href="#" class="text-sm text-primary ask-button !bg-green-800 !text-white"
+                        @click.prevent="changeQuestionStatus(question.id, 'unpinned')"
+                        v-else-if="question.pinned === true">
+                        Anheftung aufheben
+                    </a>
+                    <a href="#" class="text-sm text-primary ask-button !bg-red-800 !text-white"
                         @click.prevent="changeQuestionStatus(question.id, 'rejected')">
                         Löschen
                     </a>
                 </div>
+                <StarIcon
+                    class="h-3 w-3 text-secondary absolute top-2 left-2"
+                    v-if="question.pinned == true"
+                />
             </div>
         </div>
         <Toaster />

@@ -3,7 +3,7 @@ const config = useRuntimeConfig();
 import PocketBase from 'pocketbase';
 import { onMounted, reactive, ref, onUnmounted } from 'vue';
 import {HandThumbUpIcon as Icon, UserGroupIcon} from '@heroicons/vue/24/outline';
-import {HandThumbUpIcon as SolidIcon} from '@heroicons/vue/24/solid';
+import {HandThumbUpIcon as SolidIcon, StarIcon} from '@heroicons/vue/24/solid';
 import { Toaster, toast } from 'vue-sonner'
 import { v4 as uuidv4 } from 'uuid';
 const route = useRoute();
@@ -216,6 +216,17 @@ const sortQuestions = (sort) => {
     if (newButton) {
         newButton.classList.add('underline');
     }
+    data.questions.sort((a, b) => {
+        if (a.pinned === b.pinned) {
+            return 0;
+        } else if (a.pinned === true) {
+            console.log('a', a);
+            console.log('b', b);
+            return -1;
+        } else {
+            return 1;
+        }
+    });
 };
 
 const toggleLike = async (question) => {
@@ -358,7 +369,11 @@ onUnmounted(() => {
                 </div>
             </div>
             <div v-for="question in data.questions" :id="question.id" v-bind:key="question.id"
-                class="p-4 md:p-6 bg-secondary/10 mb-4 flex justify-between items-start gap-4 md:gap-8 rounded-md">
+                class="p-4 md:p-6 bg-secondary/10 mb-4 flex justify-between items-start gap-4 md:gap-8 rounded-md relative"
+                :class="{
+                    'border-secondary border-2': question.pinned === true
+                }"
+            >
                 <p>
                     {{ question.content }}
                 </p>
@@ -370,6 +385,10 @@ onUnmounted(() => {
                         {{ question.likes.length }}
                     </p>
                 </div>
+                <StarIcon
+                    class="h-3 w-3 text-secondary absolute top-1 right-1"
+                    v-if="question.pinned == true"
+                />
             </div>
         </div>
         <Toaster />
