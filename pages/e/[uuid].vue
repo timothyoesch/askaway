@@ -369,9 +369,9 @@ onUnmounted(() => {
                 </div>
             </div>
             <div v-for="question in data.questions" :id="question.id" v-bind:key="question.id"
-                class="p-4 md:p-6 bg-secondary/10 mb-4 flex justify-between items-start gap-4 md:gap-8 rounded-md relative"
+                class="p-4 md:p-6 bg-secondary/10 mb-4 flex justify-between items-start gap-4 md:gap-8 rounded-md relative border-2 border-accent"
                 :class="{
-                    'border-secondary border-2': question.pinned === true
+                    '!border-secondary': question.pinned === true,
                 }"
             >
                 <p>
