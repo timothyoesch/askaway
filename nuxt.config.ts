@@ -8,6 +8,9 @@ export default defineNuxtConfig({
         plugins: [
             tailwindcss(),
         ],
+        esbuild: {
+            drop: ["console"],
+        },
     },
     css: [
         '@/assets/css/main.css',
