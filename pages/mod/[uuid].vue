@@ -234,7 +234,7 @@ const copyLink = (uuid) => {
                 </div>
             </div>
             <div v-for="question in data.questions" :id="question.id" v-bind:key="question.id"
-                class="p-4 md:p-6 bg-secondary/10 mb-4 rounded-md relative border-2 border-accent"
+                class="p-4 md:p-6 bg-secondary/10 mb-4 rounded-md relative border-2 border-transparent"
                 :class="{
                     '!border-secondary': question.pinned === true,
                     '!bg-orange-400/40': question.approved_at === null || question.approved_at === '',
