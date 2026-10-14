@@ -1,0 +1,123 @@
+@import "tailwindcss";
+@import "@fontsource/allan/400.css";
+@import "@fontsource/allan/700.css";
+@import "@fontsource-variable/nunito";
+
+@theme {
+  --font-display: "Allan", ui-rounded, system-ui, sans-serif;
+  --font-sans: "Nunito Variable", ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Brand: the v1 pink + electric blue, plus softer steps around them. */
+  --color-pink: #ffadec;
+  --color-pink-soft: #ffd6f5;
+  --color-pink-wash: #fff3fc;
+  --color-ink: #4400ff;
+  --color-ink-deep: #2a0099;
+  --color-ink-soft: #e6dcff;
+  --color-text: #1f1147;
+  --color-muted: #6b6290;
+  --color-line: #ecdff3;
+  --color-surface: #ffffff;
+
+  --color-mint: #12a26a;
+  --color-mint-soft: #d9f7ea;
+  --color-honey: #c27803;
+  --color-honey-soft: #fff1cf;
+  --color-berry: #d63a5c;
+  --color-berry-soft: #ffe0e7;
+
+  --radius-card: 1.25rem;
+  --shadow-card: 0 1px 2px rgb(68 0 255 / 0.06), 0 8px 24px -12px rgb(68 0 255 / 0.18);
+  --shadow-lift: 0 2px 4px rgb(68 0 255 / 0.08), 0 16px 40px -16px rgb(68 0 255 / 0.35);
+
+  --animate-pop: pop 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-wiggle: wiggle 500ms ease-in-out;
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes pop {
+    0% { transform: scale(0.92); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-8deg); }
+    75% { transform: rotate(8deg); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-pink-wash font-sans text-text antialiased;
+  }
+  h1, h2, h3, .font-display {
+    @apply font-display;
+    letter-spacing: 0.01em;
+  }
+  :focus-visible {
+    @apply outline-3 outline-offset-2 outline-ink;
+  }
+  ::selection {
+    @apply bg-pink text-ink-deep;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-(--radius-card) bg-surface shadow-(--shadow-card);
+  }
+  .field {
+    @apply w-full rounded-2xl border-2 border-line bg-surface px-4 py-3 text-base text-text transition-colors placeholder:text-muted/70 focus:border-ink focus:outline-none;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-bold text-text;
+  }
+  .hint {
+    @apply mt-1 text-sm text-muted;
+  }
+  .container-app {
+    @apply mx-auto w-full max-w-3xl px-4 sm:px-6;
+  }
+}
+
+/* Smooth re-ordering of question lists (TransitionGroup name="list"). */
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: transform 450ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms ease;
+}
+.list-enter-from {
+  opacity: 0;
+  transform: translateY(16px) scale(0.98);
+}
+.list-leave-to {
+  opacity: 0;
+  transform: scale(0.96);
+}
+.list-leave-active {
+  position: absolute;
+  width: 100%;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 250ms ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}

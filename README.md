@@ -1,75 +1,36 @@
-# Nuxt Minimal Starter
+# Ask Away!
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Free, simple and tracking-free live Q&A for events. Your audience scans a QR
+code, asks questions (anonymously as a cute animal, if they like) and upvotes
+the ones they want answered. You moderate from your phone or laptop while the
+projector shows the questions live.
 
-## Setup
+- 📱 **No sign-up for participants**: scan, ask, vote.
+- 📽️ **Presenter view**: join screen with QR code, or a live question list with a spotlight on the question being answered.
+- 🛡️ **Moderation**: approve or decline questions, pin, spotlight, mark as answered. Owner and moderator links are separate.
+- 💌 **Stay in touch**: optional double opt-in sign-up when the event ends.
+- 🌍 German and English.
+- 🌱 **Tracking-free**: no third-party requests, and events are deleted automatically after the event.
 
-Make sure to install dependencies:
+## Documentation
 
-```bash
-# npm
-npm install
+- [Usage](docs/usage.md): running an event as organiser or moderator
+- [Deployment](docs/deployment.md): self-hosting with Docker, configuration, upgrades, backups
+- [Development](docs/development.md): architecture and local setup
 
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+## Quick start (self-hosting)
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+curl -O https://raw.githubusercontent.com/timothyoesch/askaway/main/docker-compose.yml
+curl -o .env https://raw.githubusercontent.com/timothyoesch/askaway/main/.env.example
+# edit .env, then:
+docker compose up -d
 ```
 
-## Production
+Then point your reverse proxy at `127.0.0.1:8090`. See [docs/deployment.md](docs/deployment.md).
 
-Build the application for production:
+## Tech
 
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+[Nuxt](https://nuxt.com) (static SPA) + [PocketBase](https://pocketbase.io)
+(database, realtime and server logic in `pocketbase/pb_hooks`), shipped as a
+single Docker image.

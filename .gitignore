@@ -9,6 +9,13 @@ dist
 # Node dependencies
 node_modules
 
+# PocketBase (binary and local data; migrations and hooks are committed)
+pocketbase/pocketbase
+pocketbase/pb_data
+pocketbase/pb_public
+pocketbase/CHANGELOG.md
+pocketbase/LICENSE.md
+
 # Logs
 logs
 *.log
