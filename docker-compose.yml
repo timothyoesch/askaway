@@ -1,0 +1,31 @@
+# Ask Away! — production deployment.
+#
+# One container runs everything: the web app, the API/realtime server and the
+# database (SQLite, stored in the "askaway_data" volume). Put your own reverse
+# proxy (Caddy, nginx, Traefik, …) in front of port 8090 for HTTPS.
+#
+#   cp .env.example .env   # then fill it in
+#   docker compose up -d
+#
+# Upgrading: `docker compose pull && docker compose up -d`. Database migrations
+# in the new image are applied automatically on start.
+
+services:
+  askaway:
+    image: ghcr.io/timothyoesch/askaway:${ASKAWAY_VERSION:-latest}
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      # Only reachable from this machine: your reverse proxy forwards to it.
+      # Use "8090:8090" instead if the proxy runs on another host.
+      - "127.0.0.1:8090:8090"
+    volumes:
+      - askaway_data:/pb_data
+    ulimits:
+      # Every open browser keeps a realtime connection open.
+      nofile:
+        soft: 65535
+        hard: 65535
+
+volumes:
+  askaway_data:

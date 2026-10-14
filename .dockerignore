@@ -1,0 +1,14 @@
+.git
+.github
+.nuxt
+.output
+.data
+node_modules
+docs
+pocketbase/pocketbase
+pocketbase/pb_data
+pocketbase/pb_public
+.env
+.env.*
+*.log
+.DS_Store
