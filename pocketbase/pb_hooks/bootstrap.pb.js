@@ -94,5 +94,18 @@ onMailerSend((e) => {
     for (const link of links) console.log("[mail] link: " + link.slice(6, -1))
     return
   }
-  return e.next()
+  // Emails are sent in the background, so failures would otherwise only show up
+  // in the dashboard logs (/_/ → Logs). Print them to the container log as well.
+  // Recipients are left out on purpose (privacy).
+  try {
+    e.next()
+  } catch (err) {
+    const error = String(err)
+    let hint = ""
+    if (/\b535\b|auth/i.test(error)) hint = " → the mail server rejected SMTP_USERNAME / SMTP_PASSWORD"
+    else if (/timeout|refused|no such host|dial/i.test(error)) hint = " → can't reach SMTP_HOST:SMTP_PORT (check host, port and SMTP_TLS)"
+    else if (/tls|certificate|handshake/i.test(error)) hint = " → TLS problem: use SMTP_TLS=true with port 465, false with 587"
+    console.log("[mail] ERROR sending «" + e.message.subject + "»: " + error + hint)
+    throw err
+  }
 })

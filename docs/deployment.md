@@ -143,6 +143,28 @@ volume contents with an unpacked backup, and start it again.
 - [ ] Test login emails arrive (and don't land in spam).
 - [ ] Have a backup and know how to restore it.
 
+## Troubleshooting email
+
+Emails are sent in the background, so the login page says "code is on its way"
+even if sending fails. Failures are printed in the container log as
+`[mail] ERROR …` (`docker compose logs askaway`) and also appear in the
+dashboard under `/_/` → *Logs*.
+
+- **`535 Authentication failed`**: the mail server rejected the username/password.
+  - Mailgun: `SMTP_USERNAME`/`SMTP_PASSWORD` must be an **SMTP credential** of
+    the sending domain (*Sending → Domain settings → SMTP credentials*), not an
+    API key. The username includes the domain, e.g. `askaway@example.ch`.
+    A new or reset credential can take a few minutes to start working.
+  - Use the host of the region your domain is in: `smtp.eu.mailgun.org` for EU
+    domains, `smtp.mailgun.org` for US domains.
+- **Timeouts / connection refused**: wrong host or port, or outgoing SMTP is
+  blocked by the network or hosting provider. Port 587 needs `SMTP_TLS=false`
+  (STARTTLS is used automatically), port 465 needs `SMTP_TLS=true`.
+- **Values with special characters**: wrap them in single quotes in `.env`
+  (`SMTP_PASSWORD='…'`). Docker Compose would otherwise treat a `$` as a variable.
+
+To test without logging in: `/_/` → *Settings* → *Mail settings* → *Send test email*.
+
 ## Building the image yourself
 
 ```bash
