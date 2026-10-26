@@ -87,7 +87,8 @@
     "sortNewest": "Neueste",
     "emptyTitle": "So still hier…",
     "emptyText": "Stell als erste Person eine Frage! 🌟",
-    "answeredQuestions": "Beantwortet"
+    "answeredQuestions": "Beantwortet",
+    "instantHint": "Fragen erscheinen sofort für alle."
   },
   "identity": {
     "askingAs": "Du fragst als",
@@ -95,7 +96,8 @@
     "nameLabel": "Dein Name",
     "nameHint": "Optional. Leer lassen, um anonym zu bleiben. Gilt für Fragen, die du ab jetzt stellst.",
     "animalLabel": "Wähle dein Tierchen",
-    "saved": "Schön, dich kennenzulernen! 🐾"
+    "saved": "Schön, dich kennenzulernen! 🐾",
+    "shuffle": "Zufälliges Tierchen"
   },
   "closed": {
     "title": "Das war's!",
@@ -343,5 +345,87 @@
     "octopus": "Anonymer Oktopus",
     "snail": "Anonyme Schnecke",
     "flamingo": "Anonymer Flamingo"
+  },
+  "welcome": {
+    "title": "Willkommen! 👋",
+    "ask": "Stell deine Frage – sie erscheint auf der grossen Leinwand.",
+    "vote": "Tippe bei Fragen, die du auch hören willst, auf 👍. Die beliebtesten kommen zuerst dran.",
+    "moderated": "Fragen werden vor der Veröffentlichung kurz vom Moderationsteam geprüft.",
+    "instant": "Deine Frage erscheint sofort für alle.",
+    "start": "Los geht's",
+    "howItWorks": "So funktioniert's"
+  },
+  "tour": {
+    "next": "Weiter",
+    "back": "Zurück",
+    "done": "Alles klar!",
+    "help": "Hilfe",
+    "menuTitle": "Kurze Touren",
+    "menu": {
+      "basics": "Schnellstart",
+      "queue": "Fragen freigeben",
+      "live": "Fragerunde leiten",
+      "share": "Teilen & Team",
+      "settings": "Einstellungen"
+    },
+    "basics": {
+      "welcomeTitle": "Willkommen im Kontrollraum 🎛️",
+      "welcomeOwner": "Hier steuerst du dein Event. Eine kurze Runde – du kannst jederzeit abbrechen.",
+      "welcomeMod": "Du hilfst beim Moderieren. Eine kurze Runde – du kannst jederzeit abbrechen.",
+      "screenTitle": "Was die Leinwand zeigt",
+      "screen": "Wechsle zwischen dem Beitritts-Screen mit QR-Code und den Fragen. Der Beamer aktualisiert sich sofort.",
+      "presenterTitle": "Beamer-Ansicht",
+      "presenter": "Öffne sie auf dem Computer am Beamer und drück F für Vollbild.",
+      "tabsTitle": "Hier leben die Fragen",
+      "tabs": "Neue Fragen landen unter «Wartend» – das Zählerchen wird orange. Freigegebene Fragen findest du unter «Live».",
+      "helpTitle": "Mal stecken geblieben?",
+      "help": "Hier findest du jederzeit kurze Touren zu jedem Bereich. Viel Spass! 💜"
+    },
+    "queue": {
+      "decideTitle": "Annehmen oder ablehnen",
+      "decide": "✅ Annehmen zeigt die Frage auf allen Handys und dem Beamer. ✖️ Ablehnen blendet sie aus.",
+      "empty": "Sobald jemand fragt, erscheint die Frage hier – auch wenn du gerade woanders bist, gibt es einen Hinweis.",
+      "undoTitle": "Nichts ist endgültig",
+      "undo": "Abgelehnte Fragen findest du hier und kannst sie jederzeit doch noch annehmen.",
+      "offTitle": "Freigabe ist aus",
+      "off": "Fragen erscheinen gerade sofort für alle. Unter «Live» kannst du sie trotzdem ausblenden.",
+      "switchTitle": "Freigabe ein- und ausschalten",
+      "switch": "Ob Fragen zuerst freigegeben werden müssen, stellst du in den Einstellungen ein."
+    },
+    "live": {
+      "actionsTitle": "Durch die Fragerunde führen",
+      "actions": "🎤 Spotlight zeigt eine Frage gross auf dem Beamer und markiert sie auf allen Handys. ✅ Beantwortet räumt sie weg. ⭐ Anheften hält sie oben.",
+      "empty": "Freigegebene Fragen erscheinen hier, sortiert wie auf der Leinwand.",
+      "spotlightTitle": "Gerade im Spotlight",
+      "spotlight": "Ist die Antwort fertig? Ein Klick auf «Fertig» – und weiter zur nächsten Frage.",
+      "answeredTitle": "Nichts geht verloren",
+      "answered": "Beantwortete Fragen landen hier. Du kannst sie jederzeit zurück auf die Leinwand holen."
+    },
+    "share": {
+      "publicTitle": "Für alle",
+      "public": "Teile den Link für Teilnehmende – oder zeig einfach den Beitritts-Screen mit dem QR-Code.",
+      "teamTitle": "Hilfe holen",
+      "team": "Mit dem Moderations-Link kann dein Team Fragen freigeben und den Screen wechseln, aber nichts löschen oder umstellen.",
+      "accountTitle": "Nicht verlieren",
+      "account": "Füg das Event deinem Konto hinzu, damit du es auf jedem Gerät wiederfindest.",
+      "modTitle": "Du moderierst",
+      "mod": "Als Moderator*in kannst du Fragen freigeben und den Screen wechseln. Einstellungen ändert die Person, der das Event gehört."
+    },
+    "settings": {
+      "moderationTitle": "Der wichtigste Schalter",
+      "moderation": "Müssen Fragen zuerst freigegeben werden? Bei öffentlichen oder politischen Events empfehlen wir: ja.",
+      "newsletterTitle": "In Kontakt bleiben",
+      "newsletter": "Am Schluss können sich Teilnehmende freiwillig für Updates von dir anmelden – mit Double-Opt-in.",
+      "exportTitle": "Für später",
+      "export": "Lade die Fragen als Liste herunter – praktisch für Notizen oder ein Follow-up.",
+      "closeTitle": "Zum Schluss",
+      "close": "Beende das Event am Ende: Handys und Beamer zeigen dann einen Danke-Screen."
+    },
+    "disable": "Tipps nicht mehr automatisch anzeigen",
+    "enable": "Tipps wieder automatisch anzeigen",
+    "disabledInfo": "Alles klar – keine automatischen Tipps mehr. Du findest sie jederzeit unter «Hilfe» 💡",
+    "enabledInfo": "Tipps erscheinen wieder automatisch 💡",
+    "demoBadge": "Beispiel",
+    "demoQuestion": "Wie viele Kaffees braucht es für eine richtig gute Fragerunde? ☕"
   }
 }

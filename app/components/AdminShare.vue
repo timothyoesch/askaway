@@ -56,13 +56,13 @@ async function claim() {
 
 <template>
   <div class="space-y-6">
-    <section class="card space-y-4 p-5">
+    <section class="card space-y-4 p-5" data-tour="share-public">
       <h3 class="text-2xl font-bold text-ink">{{ t('share.forEveryone') }}</h3>
       <CopyField :label="t('share.participantLink')" :value="participantUrl" :hint="t('share.participantHint')" />
       <CopyField :label="t('share.presentLink')" :value="presentUrl" :hint="t('share.presentHint')" />
     </section>
 
-    <section v-if="role === 'owner'" class="card space-y-4 p-5">
+    <section v-if="role === 'owner'" class="card space-y-4 p-5" data-tour="share-team">
       <h3 class="text-2xl font-bold text-ink">{{ t('share.forTeam') }}</h3>
       <CopyField v-if="modUrl" :label="t('share.modLink')" :value="modUrl" :hint="t('share.modHint')" secret />
       <p v-else class="text-muted">{{ t('share.noModLink') }}</p>
@@ -76,7 +76,7 @@ async function claim() {
       </div>
     </section>
 
-    <section v-if="role === 'owner' && !event.hasOwner" class="card p-5">
+    <section v-if="role === 'owner' && !event.hasOwner" class="card p-5" data-tour="share-account">
       <h3 class="text-2xl font-bold text-ink">{{ t('share.accountTitle') }}</h3>
       <p class="mt-1 text-muted">{{ t('share.accountText') }}</p>
       <AppButton v-if="user" class="mt-4" :loading="claiming" @click="claim">

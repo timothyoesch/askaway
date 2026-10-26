@@ -70,3 +70,11 @@ export function participantToken(code: string) {
     set: (token: string | null) => write(`askaway:participant:${code}`, token),
   }
 }
+
+// Whether this browser has already seen the welcome explainer for an event.
+export function welcomeFlag(code: string) {
+  return {
+    get: () => read<boolean>(`askaway:welcomed:${code}`, false),
+    set: () => write(`askaway:welcomed:${code}`, true),
+  }
+}

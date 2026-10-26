@@ -87,7 +87,8 @@
     "sortNewest": "Newest",
     "emptyTitle": "So quiet in here…",
     "emptyText": "Be the first to ask something! 🌟",
-    "answeredQuestions": "Answered"
+    "answeredQuestions": "Answered",
+    "instantHint": "Questions appear for everyone right away."
   },
   "identity": {
     "askingAs": "Asking as",
@@ -95,7 +96,8 @@
     "nameLabel": "Your name",
     "nameHint": "Optional. Leave it empty to stay anonymous. Applies to questions you ask from now on.",
     "animalLabel": "Pick your animal",
-    "saved": "Lovely to meet you! 🐾"
+    "saved": "Lovely to meet you! 🐾",
+    "shuffle": "Random animal"
   },
   "closed": {
     "title": "That's a wrap!",
@@ -343,5 +345,87 @@
     "octopus": "Anonymous Octopus",
     "snail": "Anonymous Snail",
     "flamingo": "Anonymous Flamingo"
+  },
+  "welcome": {
+    "title": "Welcome! 👋",
+    "ask": "Ask your question – it shows up on the big screen.",
+    "vote": "Tap 👍 on questions you'd like answered too. The most popular ones come first.",
+    "moderated": "A moderator has a quick look at each question before it appears.",
+    "instant": "Your question appears for everyone right away.",
+    "start": "Let's go",
+    "howItWorks": "How it works"
+  },
+  "tour": {
+    "next": "Next",
+    "back": "Back",
+    "done": "Got it!",
+    "help": "Help",
+    "menuTitle": "Quick tours",
+    "menu": {
+      "basics": "Quick start",
+      "queue": "Approving questions",
+      "live": "Running the Q&A",
+      "share": "Sharing & team",
+      "settings": "Settings"
+    },
+    "basics": {
+      "welcomeTitle": "Welcome to the control room 🎛️",
+      "welcomeOwner": "This is where you run your event. A quick tour – skip it any time.",
+      "welcomeMod": "You're helping to moderate. A quick tour – skip it any time.",
+      "screenTitle": "What the big screen shows",
+      "screen": "Switch between the join screen with the QR code and the questions. The projector updates instantly.",
+      "presenterTitle": "Presenter view",
+      "presenter": "Open it on the computer connected to the projector and press F for fullscreen.",
+      "tabsTitle": "Where the questions live",
+      "tabs": "New questions land in «Waiting» – the counter turns orange. Approved ones are under «Live».",
+      "helpTitle": "Stuck at some point?",
+      "help": "You can replay short tours for every section here at any time. Have fun! 💜"
+    },
+    "queue": {
+      "decideTitle": "Accept or decline",
+      "decide": "✅ Accept shows the question on all phones and the projector. ✖️ Decline hides it.",
+      "empty": "As soon as someone asks, the question appears here – you'll get a heads-up even if you're on another tab.",
+      "undoTitle": "Nothing is final",
+      "undo": "Declined questions end up here, and you can still accept them later.",
+      "offTitle": "Approval is off",
+      "off": "Questions currently appear for everyone right away. You can still hide them under «Live».",
+      "switchTitle": "Switch approval on or off",
+      "switch": "Whether questions need approval first is set in the settings."
+    },
+    "live": {
+      "actionsTitle": "Running the Q&A",
+      "actions": "🎤 Spotlight shows a question big on the projector and highlights it on every phone. ✅ Answered clears it away. ⭐ Pin keeps it at the top.",
+      "empty": "Approved questions show up here, sorted just like on the big screen.",
+      "spotlightTitle": "In the spotlight",
+      "spotlight": "Answer finished? One click on «Done» – and on to the next question.",
+      "answeredTitle": "Nothing gets lost",
+      "answered": "Answered questions end up here. You can bring them back to the screen any time."
+    },
+    "share": {
+      "publicTitle": "For everyone",
+      "public": "Share the participant link – or simply show the join screen with the QR code.",
+      "teamTitle": "Get some help",
+      "team": "With the moderator link, your team can approve questions and switch the screen, but can't delete or change anything.",
+      "accountTitle": "Don't lose it",
+      "account": "Add the event to your account so you'll find it again on any device.",
+      "modTitle": "You're moderating",
+      "mod": "As a moderator you can approve questions and switch the screen. Settings are up to the event owner."
+    },
+    "settings": {
+      "moderationTitle": "The most important switch",
+      "moderation": "Do questions need approval first? For public or political events we recommend: yes.",
+      "newsletterTitle": "Stay in touch",
+      "newsletter": "At the end, participants can choose to sign up for updates from you – with double opt-in.",
+      "exportTitle": "For later",
+      "export": "Download the questions as a list – handy for notes or a follow-up.",
+      "closeTitle": "At the end",
+      "close": "Close the event when you are done: phones and the projector then show a thank-you screen."
+    },
+    "disable": "Don't show tips automatically",
+    "enable": "Show tips automatically again",
+    "disabledInfo": "Got it – no more automatic tips. You'll always find them under «Help» 💡",
+    "enabledInfo": "Tips will show up automatically again 💡",
+    "demoBadge": "Example",
+    "demoQuestion": "How many coffees does it take to run a really good Q&A? ☕"
   }
 }

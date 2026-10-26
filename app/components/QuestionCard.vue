@@ -9,6 +9,8 @@ const props = withDefaults(defineProps<{
   mine?: boolean
   spotlight?: boolean
   showVotes?: boolean
+  /** Sample card shown during a guided tour. */
+  demo?: boolean
 }>(), { showVotes: true })
 defineEmits<{ vote: [] }>()
 
@@ -30,6 +32,7 @@ const answered = computed(() => !!props.question.answeredAt)
       <div class="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
         <span class="text-lg leading-none" aria-hidden="true">{{ animalEmoji(question.animal) }}</span>
         <span class="font-bold text-text">{{ displayName(question) }}</span>
+        <span v-if="demo" class="rounded-full bg-honey-soft px-2 py-0.5 text-xs font-bold text-honey">{{ t('tour.demoBadge') }}</span>
         <span v-if="mine" class="rounded-full bg-pink-soft px-2 py-0.5 text-xs font-bold text-ink-deep">{{ t('question.you') }}</span>
         <span v-if="spotlight" class="inline-flex items-center gap-1 rounded-full bg-ink px-2 py-0.5 text-xs font-bold text-pink">
           <SparklesIcon class="size-3.5" aria-hidden="true" />{{ t('question.spotlight') }}

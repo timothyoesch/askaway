@@ -143,7 +143,7 @@ async function destroy() {
 <template>
   <div class="space-y-6">
     <!-- Moderation: the most important switch, so it comes first. -->
-    <section class="card p-5">
+    <section class="card p-5" data-tour="settings-moderation">
       <ToggleSwitch v-model="moderation" :label="t('settings.moderationLabel')" :description="t('settings.moderationHelp')" />
       <p class="mt-3 rounded-xl bg-pink-wash px-3 py-2 text-sm text-ink-deep">
         {{ event.moderation ? t('settings.moderationStateOn') : t('settings.moderationStateOff') }}
@@ -169,7 +169,7 @@ async function destroy() {
       </form>
     </section>
 
-    <section class="card p-5">
+    <section class="card p-5" data-tour="settings-newsletter">
       <h3 class="text-2xl font-bold text-ink">{{ t('settings.newsletter') }}</h3>
       <p class="mt-1 text-muted">{{ t('settings.newsletterIntro') }}</p>
       <p v-if="!event.newsletterAvailable" class="mt-4 rounded-xl bg-honey-soft px-3 py-2 text-sm text-honey">
@@ -202,7 +202,7 @@ async function destroy() {
       </form>
     </section>
 
-    <section class="card p-5">
+    <section class="card p-5" data-tour="settings-export">
       <h3 class="text-2xl font-bold text-ink">{{ t('settings.export') }}</h3>
       <p class="mt-1 text-muted">{{ t('settings.exportIntro') }}</p>
       <div class="mt-4 flex flex-wrap gap-2">
@@ -214,7 +214,7 @@ async function destroy() {
       <p v-if="subscriberInfo" class="hint">{{ t('settings.subscriberStats', subscriberInfo) }}</p>
     </section>
 
-    <section class="card border-2 border-berry-soft p-5">
+    <section class="card border-2 border-berry-soft p-5" data-tour="settings-danger">
       <h3 class="text-2xl font-bold text-berry">{{ t('settings.dangerZone') }}</h3>
       <div class="mt-4 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
