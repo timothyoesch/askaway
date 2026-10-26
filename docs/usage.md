@@ -42,6 +42,14 @@ on the projector computer) to choose what is shown:
 - **Questions**: the top questions (pinned first, then most votes), updated live.
   A small QR code stays in the corner for latecomers.
 
+**Guided tours**: the first time you open the moderation page, a short tour
+shows the most important controls. Each section (*Waiting*, *Live*, *Share*,
+*Settings*) has its own mini-tour that runs the first time you open it, so
+moderators who only approve questions never see the rest. Replay any tour via
+**Help** (top right). To stop tours from starting on their own, click *Don't
+show tips automatically* in any tour or in the Help menu. This is remembered in
+your browser for all events and can be switched back on in the same menu.
+
 **Moderating** (tabs on the moderation page):
 
 - **Waiting**: accept ✅ or decline ✖️ new questions.
@@ -53,7 +61,11 @@ on the projector computer) to choose what is shown:
   - **Hide** moves it to *Declined*.
 - **Answered** / **Declined**: you can move questions back from here.
 
-**Participants** get a random anonymous animal name (e.g. "Anonymous Otter").
+**Participants** see a short welcome on their first visit: how to ask, that
+they can upvote with 👍, and whether questions are checked by a moderator first.
+They can pick a name and animal right there or stay anonymous with a random
+animal name (e.g. "Anonymous Otter"). *How it works* below the question field
+shows the welcome again.
 They can change it or add their own name. They can edit or withdraw their own
 questions while those are waiting for approval.
 

@@ -17,6 +17,7 @@
     "@heroicons/vue": "^2.2.0",
     "@nuxtjs/i18n": "^10.6.0",
     "@tailwindcss/vite": "^4.3.3",
+    "driver.js": "1.8.0",
     "nuxt": "^4.6.1",
     "pocketbase": "^0.28.1",
     "tailwindcss": "^4.3.3",

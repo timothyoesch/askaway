@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { PaperAirplaneIcon, PencilSquareIcon, TrashIcon, ClockIcon, MicrophoneIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
+import { PaperAirplaneIcon, PencilSquareIcon, TrashIcon, ClockIcon, MicrophoneIcon, ChevronDownIcon, QuestionMarkCircleIcon } from '@heroicons/vue/24/outline'
 import { toast } from 'vue-sonner'
-import type { Question } from '~/utils/types'
+import type { Me, Question } from '~/utils/types'
 import type { SortMode } from '~/utils/questions'
 
 const route = useRoute()
@@ -119,10 +119,20 @@ async function withdraw(question: Question) {
   }
 }
 
-// --- identity -------------------------------------------------------------------------
+// --- identity & first-visit welcome ---------------------------------------------------
 const identityOpen = ref(false)
 const identity = reactive({ name: '', animal: '' })
 const savingIdentity = ref(false)
+const welcomeOpen = ref(false)
+const welcomed = welcomeFlag(code)
+
+// Explain the basics once per event, as soon as we know who the participant is.
+watch([status, me], () => {
+  if (status.value === 'ready' && me.value && !event.value?.closed && !welcomed.get()) {
+    welcomed.set()
+    welcomeOpen.value = true
+  }
+})
 
 function openIdentity() {
   identity.name = me.value?.participant.name || ''
@@ -130,12 +140,13 @@ function openIdentity() {
   identityOpen.value = true
 }
 
-async function saveIdentity() {
+async function saveIdentity(changes: { name: string, animal: string } = identity) {
   savingIdentity.value = true
   try {
-    const result = await api.patch<{ participant: Me['participant'] }>(`/events/${code}/me`, identity, { participant: token.value })
+    const result = await api.patch<{ participant: Me['participant'] }>(`/events/${code}/me`, changes, { participant: token.value })
     if (me.value) me.value.participant = result.participant
     identityOpen.value = false
+    welcomeOpen.value = false
     toast.success(t('identity.saved'))
   } catch (err) {
     showError(err)
@@ -223,7 +234,12 @@ const startsAt = computed(() => (event.value?.startsAt ? d(new Date(event.value.
                 </AppButton>
               </div>
             </div>
-            <p v-if="event.moderation" class="hint mt-3">{{ t('ask.moderatedHint') }}</p>
+            <div class="mt-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <p class="hint !mt-0">{{ event.moderation ? t('ask.moderatedHint') : t('ask.instantHint') }}</p>
+              <button type="button" class="inline-flex items-center gap-1 text-sm font-bold text-ink hover:underline" @click="welcomeOpen = true">
+                <QuestionMarkCircleIcon class="size-4" aria-hidden="true" />{{ t('welcome.howItWorks') }}
+              </button>
+            </div>
           </form>
         </section>
 
@@ -311,32 +327,20 @@ const startsAt = computed(() => (event.value?.startsAt ? d(new Date(event.value.
       </div>
 
       <AppDialog v-model:open="identityOpen" :title="t('identity.title')">
-        <form class="space-y-5" @submit.prevent="saveIdentity">
-          <div>
-            <label for="name" class="label">{{ t('identity.nameLabel') }}</label>
-            <input id="name" v-model="identity.name" class="field" maxlength="40" :placeholder="displayName({ animal: identity.animal })">
-            <p class="hint">{{ t('identity.nameHint') }}</p>
-          </div>
-          <div>
-            <p class="label">{{ t('identity.animalLabel') }}</p>
-            <div class="grid grid-cols-6 gap-1.5">
-              <button
-                v-for="animal in ANIMALS"
-                :key="animal"
-                type="button"
-                class="grid aspect-square place-items-center rounded-xl text-2xl transition-transform hover:scale-110"
-                :class="identity.animal === animal ? 'bg-ink-soft ring-2 ring-ink' : 'bg-pink-wash'"
-                :aria-label="t(`animals.${animal}`)"
-                :aria-pressed="identity.animal === animal"
-                @click="identity.animal = animal"
-              >
-                {{ animalEmoji(animal) }}
-              </button>
-            </div>
-          </div>
+        <form class="space-y-5" @submit.prevent="saveIdentity()">
+          <IdentityPicker v-model:name="identity.name" v-model:animal="identity.animal" />
           <AppButton type="submit" block :loading="savingIdentity">{{ t('common.save') }}</AppButton>
         </form>
       </AppDialog>
+
+      <WelcomeDialog
+        v-if="me"
+        v-model:open="welcomeOpen"
+        :moderation="event.moderation"
+        :participant="me.participant"
+        :saving="savingIdentity"
+        @save="saveIdentity"
+      />
     </template>
   </div>
 </template>
