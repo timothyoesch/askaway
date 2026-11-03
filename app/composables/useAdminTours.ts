@@ -1,7 +1,7 @@
 import type { TourStep } from './useTour'
 import type { AdminEvent, Role } from '~/utils/types'
 
-export type AdminTourId = 'basics' | 'queue' | 'live' | 'share' | 'settings'
+export type AdminTourId = 'basics' | 'questions' | 'share' | 'settings'
 
 interface Context {
   role: Role
@@ -12,15 +12,14 @@ interface Context {
 
 // Step definitions for the moderation page tours. Each tour belongs to one
 // area and stays short (2–5 steps). Steps whose element isn't on the page are
-// skipped by useTour. Empty question lists show a sample card while the tour runs.
+// skipped by useTour. Without real questions, the questions tour shows sample cards.
 export function useAdminTours() {
   const { t } = useI18n()
 
   function menuItems(role: Role) {
     const items: Array<{ id: AdminTourId, emoji: string, label: string }> = [
       { id: 'basics', emoji: '🎛️', label: t('tour.menu.basics') },
-      { id: 'queue', emoji: '🛡️', label: t('tour.menu.queue') },
-      { id: 'live', emoji: '🎤', label: t('tour.menu.live') },
+      { id: 'questions', emoji: '💬', label: t('tour.menu.questions') },
       { id: 'share', emoji: '🔗', label: t('tour.menu.share') },
     ]
     if (role === 'owner') items.push({ id: 'settings', emoji: '⚙️', label: t('tour.menu.settings') })
@@ -38,28 +37,20 @@ export function useAdminTours() {
           { element: '[data-tour="tabs"]', title: t('tour.basics.tabsTitle'), text: t('tour.basics.tabs') },
           { element: '[data-tour="help"]', title: t('tour.basics.helpTitle'), text: t('tour.basics.help') },
         ]
-      case 'queue':
+      case 'questions':
         return [
-          // With an empty queue the page shows a sample question during the tour.
-          {
-            element: '[data-tour="first-pending"]',
-            title: t('tour.queue.decideTitle'),
-            text: ctx.hasPending ? t('tour.queue.decide') : `${t('tour.queue.decide')} ${t('tour.queue.empty')}`,
-          },
-          ctx.event.moderation
-            ? { element: '[data-tour="tab-declined"]', title: t('tour.queue.undoTitle'), text: t('tour.queue.undo') }
-            : { title: t('tour.queue.offTitle'), text: t('tour.queue.off') },
-          ...(owner ? [{ element: '[data-tour="tab-settings"]', title: t('tour.queue.switchTitle'), text: t('tour.queue.switch') }] : []),
-        ]
-      case 'live':
-        return [
+          { element: '[data-tour="question-filter"]', title: t('tour.questions.filterTitle'), text: t('tour.questions.filter') },
+          // With moderation on, an empty list shows a sample waiting question during the tour.
+          ctx.event.moderation || ctx.hasPending
+            ? { element: '[data-tour="first-pending"]', title: t('tour.questions.decideTitle'), text: t('tour.questions.decide') }
+            : { title: t('tour.questions.offTitle'), text: owner ? `${t('tour.questions.off')} ${t('tour.questions.offOwner')}` : t('tour.questions.off') },
           {
             element: '[data-tour="first-live"]',
-            title: t('tour.live.actionsTitle'),
-            text: ctx.hasLive ? t('tour.live.actions') : `${t('tour.live.actions')} ${t('tour.live.empty')}`,
+            title: t('tour.questions.actionsTitle'),
+            text: ctx.hasLive ? t('tour.questions.actions') : `${t('tour.questions.actions')} ${t('tour.questions.empty')}`,
           },
-          { element: '[data-tour="spotlight-box"]', title: t('tour.live.spotlightTitle'), text: t('tour.live.spotlight') },
-          { element: '[data-tour="tab-answered"]', title: t('tour.live.answeredTitle'), text: t('tour.live.answered') },
+          { element: '[data-tour="spotlight-box"]', title: t('tour.questions.spotlightTitle'), text: t('tour.questions.spotlight') },
+          { element: '[data-tour="tab-answered"]', title: t('tour.questions.archiveTitle'), text: t('tour.questions.archive') },
         ]
       case 'share':
         return [

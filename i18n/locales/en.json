@@ -64,7 +64,8 @@
     "you": "You",
     "spotlight": "Now answering",
     "pinned": "Pinned",
-    "answered": "Answered"
+    "answered": "Answered",
+    "pending": "Awaiting approval"
   },
   "ask": {
     "label": "Your question",
@@ -149,12 +150,17 @@
     "removeSpotlight": "Remove spotlight",
     "tabsLabel": "Moderation sections",
     "tabs": {
-      "queue": "Waiting",
-      "live": "Live",
+      "questions": "Questions",
       "answered": "Answered",
       "declined": "Declined",
       "share": "Share",
       "settings": "Settings"
+    },
+    "filter": {
+      "label": "Which questions to show",
+      "all": "All",
+      "pending": "Waiting",
+      "live": "Live"
     },
     "moderationOffHint": "Approval is switched off: new questions appear immediately. You can still hide or delete them.",
     "queueEmptyTitle": "All caught up!",
@@ -163,6 +169,7 @@
     "reject": "Decline",
     "liveEmptyTitle": "No questions yet",
     "liveEmptyText": "Approved questions show up here, sorted like on the big screen.",
+    "allEmptyText": "New questions show up here – waiting ones always stay on top.",
     "spotlight": "Spotlight",
     "markAnswered": "Answered",
     "pin": "Pin",
@@ -311,7 +318,8 @@
     "page_not_found_title": "Nothing here",
     "page_not_found": "This page went on an adventure and didn't come back 🙈",
     "unknown_action": "That didn't work 🤷",
-    "invalid_screen": "That didn't work 🤷"
+    "invalid_screen": "That didn't work 🤷",
+    "question_already_handled": "Someone beat you to it – this question has already been decided 🙌"
   },
   "animals": {
     "unknown": "Anonymous Guest",
@@ -363,8 +371,7 @@
     "menuTitle": "Quick tours",
     "menu": {
       "basics": "Quick start",
-      "queue": "Approving questions",
-      "live": "Running the Q&A",
+      "questions": "Moderating questions",
       "share": "Sharing & team",
       "settings": "Settings"
     },
@@ -377,35 +384,31 @@
       "presenterTitle": "Presenter view",
       "presenter": "Open it on the computer connected to the projector and press F for fullscreen.",
       "tabsTitle": "Where the questions live",
-      "tabs": "New questions land in «Waiting» – the counter turns orange. Approved ones are under «Live».",
+      "tabs": "«Questions» holds everything that's going on: waiting questions sit at the top (the counter turns orange), followed by the ones on the big screen.",
       "helpTitle": "Stuck at some point?",
       "help": "You can replay short tours for every section here at any time. Have fun! 💜"
     },
-    "queue": {
+    "questions": {
+      "filterTitle": "Everything in one place",
+      "filter": "See all questions here – or just some of them. More than one of you? Split up: one person filters on «Waiting» and approves, another on «Live» and runs the Q&A. 🤝",
       "decideTitle": "Accept or decline",
-      "decide": "✅ Accept shows the question on all phones and the projector. ✖️ Decline hides it.",
-      "empty": "As soon as someone asks, the question appears here – you'll get a heads-up even if you're on another tab.",
-      "undoTitle": "Nothing is final",
-      "undo": "Declined questions end up here, and you can still accept them later.",
+      "decide": "✅ Accept shows the question on all phones and the projector. ✖️ Decline hides it. If two people decide at the same time, the first click counts.",
       "offTitle": "Approval is off",
-      "off": "Questions currently appear for everyone right away. You can still hide them under «Live».",
-      "switchTitle": "Switch approval on or off",
-      "switch": "Whether questions need approval first is set in the settings."
-    },
-    "live": {
+      "off": "Questions currently appear for everyone right away. You can still hide them any time.",
+      "offOwner": "You can switch approval on in the settings.",
       "actionsTitle": "Running the Q&A",
       "actions": "🎤 Spotlight shows a question big on the projector and highlights it on every phone. ✅ Answered clears it away. ⭐ Pin keeps it at the top.",
       "empty": "Approved questions show up here, sorted just like on the big screen.",
       "spotlightTitle": "In the spotlight",
       "spotlight": "Answer finished? One click on «Done» – and on to the next question.",
-      "answeredTitle": "Nothing gets lost",
-      "answered": "Answered questions end up here. You can bring them back to the screen any time."
+      "archiveTitle": "Nothing gets lost",
+      "archive": "Answered and declined questions move to their own tabs. You can bring them back from there any time."
     },
     "share": {
       "publicTitle": "For everyone",
       "public": "Share the participant link – or simply show the join screen with the QR code.",
       "teamTitle": "Get some help",
-      "team": "With the moderator link, your team can approve questions and switch the screen, but can't delete or change anything.",
+      "team": "With the moderator link, your team can approve questions and switch the screen, but can't delete or change anything. Tip: under «Questions», everyone picks their own filter.",
       "accountTitle": "Don't lose it",
       "account": "Add the event to your account so you'll find it again on any device.",
       "modTitle": "You're moderating",

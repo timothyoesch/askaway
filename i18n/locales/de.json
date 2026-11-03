@@ -64,7 +64,8 @@
     "you": "Du",
     "spotlight": "Wird beantwortet",
     "pinned": "Angeheftet",
-    "answered": "Beantwortet"
+    "answered": "Beantwortet",
+    "pending": "Wartet auf Freigabe"
   },
   "ask": {
     "label": "Deine Frage",
@@ -149,12 +150,17 @@
     "removeSpotlight": "Spotlight entfernen",
     "tabsLabel": "Moderationsbereiche",
     "tabs": {
-      "queue": "Wartend",
-      "live": "Live",
+      "questions": "Fragen",
       "answered": "Beantwortet",
       "declined": "Abgelehnt",
       "share": "Teilen",
       "settings": "Einstellungen"
+    },
+    "filter": {
+      "label": "Welche Fragen anzeigen",
+      "all": "Alle",
+      "pending": "Wartend",
+      "live": "Live"
     },
     "moderationOffHint": "Freigabe ist ausgeschaltet: Neue Fragen erscheinen sofort. Du kannst sie trotzdem ausblenden oder löschen.",
     "queueEmptyTitle": "Alles erledigt!",
@@ -163,6 +169,7 @@
     "reject": "Ablehnen",
     "liveEmptyTitle": "Noch keine Fragen",
     "liveEmptyText": "Freigegebene Fragen erscheinen hier – sortiert wie auf der Leinwand.",
+    "allEmptyText": "Neue Fragen erscheinen hier – wartende stehen immer zuoberst.",
     "spotlight": "Spotlight",
     "markAnswered": "Beantwortet",
     "pin": "Anheften",
@@ -311,7 +318,8 @@
     "page_not_found_title": "Hier ist nichts",
     "page_not_found": "Diese Seite ist auf Abenteuerreise gegangen und nicht zurückgekommen 🙈",
     "unknown_action": "Das hat nicht geklappt 🤷",
-    "invalid_screen": "Das hat nicht geklappt 🤷"
+    "invalid_screen": "Das hat nicht geklappt 🤷",
+    "question_already_handled": "Da war jemand schneller – über diese Frage wurde schon entschieden 🙌"
   },
   "animals": {
     "unknown": "Anonymer Gast",
@@ -363,8 +371,7 @@
     "menuTitle": "Kurze Touren",
     "menu": {
       "basics": "Schnellstart",
-      "queue": "Fragen freigeben",
-      "live": "Fragerunde leiten",
+      "questions": "Fragen moderieren",
       "share": "Teilen & Team",
       "settings": "Einstellungen"
     },
@@ -377,35 +384,31 @@
       "presenterTitle": "Beamer-Ansicht",
       "presenter": "Öffne sie auf dem Computer am Beamer und drück F für Vollbild.",
       "tabsTitle": "Hier leben die Fragen",
-      "tabs": "Neue Fragen landen unter «Wartend» – das Zählerchen wird orange. Freigegebene Fragen findest du unter «Live».",
+      "tabs": "Unter «Fragen» findest du alles, was gerade läuft: Wartende Fragen stehen zuoberst (das Zählerchen wird dann orange), darunter die Fragen auf der Leinwand.",
       "helpTitle": "Mal stecken geblieben?",
       "help": "Hier findest du jederzeit kurze Touren zu jedem Bereich. Viel Spass! 💜"
     },
-    "queue": {
+    "questions": {
+      "filterTitle": "Alles an einem Ort",
+      "filter": "Hier siehst du alle Fragen – oder nur einen Teil davon. Ihr seid mehrere? Teilt euch auf: Eine Person filtert auf «Wartend» und gibt frei, eine andere auf «Live» und führt durch die Runde. 🤝",
       "decideTitle": "Annehmen oder ablehnen",
-      "decide": "✅ Annehmen zeigt die Frage auf allen Handys und dem Beamer. ✖️ Ablehnen blendet sie aus.",
-      "empty": "Sobald jemand fragt, erscheint die Frage hier – auch wenn du gerade woanders bist, gibt es einen Hinweis.",
-      "undoTitle": "Nichts ist endgültig",
-      "undo": "Abgelehnte Fragen findest du hier und kannst sie jederzeit doch noch annehmen.",
+      "decide": "✅ Annehmen zeigt die Frage auf allen Handys und dem Beamer. ✖️ Ablehnen blendet sie aus. Entscheiden zwei Personen gleichzeitig, zählt der erste Klick.",
       "offTitle": "Freigabe ist aus",
-      "off": "Fragen erscheinen gerade sofort für alle. Unter «Live» kannst du sie trotzdem ausblenden.",
-      "switchTitle": "Freigabe ein- und ausschalten",
-      "switch": "Ob Fragen zuerst freigegeben werden müssen, stellst du in den Einstellungen ein."
-    },
-    "live": {
+      "off": "Fragen erscheinen gerade sofort für alle. Ausblenden kannst du sie trotzdem jederzeit.",
+      "offOwner": "Einschalten kannst du die Freigabe in den Einstellungen.",
       "actionsTitle": "Durch die Fragerunde führen",
       "actions": "🎤 Spotlight zeigt eine Frage gross auf dem Beamer und markiert sie auf allen Handys. ✅ Beantwortet räumt sie weg. ⭐ Anheften hält sie oben.",
       "empty": "Freigegebene Fragen erscheinen hier, sortiert wie auf der Leinwand.",
       "spotlightTitle": "Gerade im Spotlight",
       "spotlight": "Ist die Antwort fertig? Ein Klick auf «Fertig» – und weiter zur nächsten Frage.",
-      "answeredTitle": "Nichts geht verloren",
-      "answered": "Beantwortete Fragen landen hier. Du kannst sie jederzeit zurück auf die Leinwand holen."
+      "archiveTitle": "Nichts geht verloren",
+      "archive": "Beantwortete und abgelehnte Fragen landen in eigenen Tabs. Von dort holst du sie jederzeit zurück."
     },
     "share": {
       "publicTitle": "Für alle",
       "public": "Teile den Link für Teilnehmende – oder zeig einfach den Beitritts-Screen mit dem QR-Code.",
       "teamTitle": "Hilfe holen",
-      "team": "Mit dem Moderations-Link kann dein Team Fragen freigeben und den Screen wechseln, aber nichts löschen oder umstellen.",
+      "team": "Mit dem Moderations-Link kann dein Team Fragen freigeben und den Screen wechseln, aber nichts löschen oder umstellen. Tipp: Unter «Fragen» wählt jede Person ihren eigenen Filter.",
       "accountTitle": "Nicht verlieren",
       "account": "Füg das Event deinem Konto hinzu, damit du es auf jedem Gerät wiederfindest.",
       "modTitle": "Du moderierst",

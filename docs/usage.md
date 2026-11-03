@@ -26,7 +26,7 @@ Every event has a 6-character code, e.g. `K7F2Q9`.
      at any time; the old one stops working immediately.
    - your **owner link**. Keep it private: it gives full control.
 4. Under **Settings**, check *"New questions need approval before they appear"*:
-   - **On**: every question waits under *Waiting* until a moderator accepts it.
+   - **On**: every question waits (marked *Awaiting approval*) until a moderator accepts it.
      Recommended for public or political events.
    - **Off**: questions appear immediately. You can still hide or delete them.
 
@@ -43,23 +43,33 @@ on the projector computer) to choose what is shown:
   A small QR code stays in the corner for latecomers.
 
 **Guided tours**: the first time you open the moderation page, a short tour
-shows the most important controls. Each section (*Waiting*, *Live*, *Share*,
-*Settings*) has its own mini-tour that runs the first time you open it, so
-moderators who only approve questions never see the rest. Replay any tour via
+shows the most important controls, followed by a mini-tour of the *Questions*
+tab. *Share* and *Settings* each have their own mini-tour that runs the first
+time you open them, so moderators who only handle questions never see the rest. Replay any tour via
 **Help** (top right). To stop tours from starting on their own, click *Don't
 show tips automatically* in any tour or in the Help menu. This is remembered in
 your browser for all events and can be switched back on in the same menu.
 
 **Moderating** (tabs on the moderation page):
 
-- **Waiting**: accept ✅ or decline ✖️ new questions.
-- **Live**: the questions as shown on screen.
+- **Questions**: everything that's going on, in one list. Waiting questions
+  stay on top, followed by the live questions as shown on screen. Each card
+  shows the buttons that fit:
+  - Waiting: **Accept** ✅ or **Decline** ✖️.
   - **Spotlight** 🎤 puts a question big on the projector ("Now answering") and
     highlights it on everyone's phone.
   - **Answered** ✅ moves it out of the list (also ends the spotlight).
   - **Pin** ⭐ keeps it at the top regardless of votes.
   - **Hide** moves it to *Declined*.
 - **Answered** / **Declined**: you can move questions back from here.
+
+**Several moderators**: in *Questions*, a filter (*All* / *Waiting* / *Live*)
+chooses what this device shows; it's remembered in the browser. Split the work
+by filter, e.g. one person on *Waiting* approves questions while another on
+*Live* runs the Q&A with the speaker. Everyone still sees every question. If
+two people decide on the same question at the same moment, the first click
+counts and the other person gets a short notice. New waiting questions trigger
+a notice for anyone who isn't currently looking at them.
 
 **Participants** see a short welcome on their first visit: how to ask, that
 they can upvote with 👍, and whether questions are checked by a moderator first.

@@ -6,17 +6,30 @@ import {
 import { toast } from 'vue-sonner'
 import type { Question, Screen } from '~/utils/types'
 import type { AdminTourId } from '~/composables/useAdminTours'
+import type { QuestionFilter } from '~/composables/useLocal'
 
-type Tab = 'queue' | 'live' | 'answered' | 'declined' | 'share' | 'settings'
+type Tab = 'questions' | 'answered' | 'declined' | 'share' | 'settings'
 
 const route = useRoute()
 const code = String(route.params.code).toUpperCase()
 const { t } = useI18n()
 
-const tab = ref<Tab>('live')
+const tab = ref<Tab>('questions')
+
+// Waiting and live questions share one list. Each device picks a filter, so a
+// team can split the work (one person screens, another runs the stage).
+const filter = ref<QuestionFilter>('all')
+const filterStore = questionFilter()
+onMounted(() => (filter.value = filterStore.get()))
+watch(filter, value => filterStore.set(value))
+
 const { event, questions, role, presence, status, key, questionAction, updateEvent, post } = useAdminEvent(code, {
   onNewPending: () => {
-    if (tab.value !== 'queue') toast(t('admin.newPending'), { id: 'new-pending', action: { label: t('admin.tabs.queue'), onClick: () => (tab.value = 'queue') } })
+    if (tab.value === 'questions' && filter.value !== 'live') return
+    toast(t('admin.newPending'), {
+      id: 'new-pending',
+      action: { label: t('admin.filter.pending'), onClick: () => { tab.value = 'questions'; filter.value = 'pending' } },
+    })
   },
 })
 useHead({ title: () => (event.value ? `${t('admin.metaTitle')} · ${event.value.title}` : t('admin.metaTitle')) })
@@ -30,15 +43,21 @@ const answered = computed(() => sortQuestions(questions.value.filter(q => q.stat
 const declined = computed(() => questions.value.filter(q => q.status === 'rejected'))
 const spotlight = computed(() => questions.value.find(q => q.id === event.value?.spotlight) || null)
 
-// Start on the queue when moderation is on and something is waiting.
-watch(status, (value) => {
-  if (value === 'ready' && event.value?.moderation && pending.value.length) tab.value = 'queue'
-}, { once: true })
+// Waiting questions stay on top in "all" so none get forgotten.
+const shown = computed(() => {
+  if (filter.value === 'pending') return pending.value
+  if (filter.value === 'live') return live.value
+  return [...pending.value, ...live.value]
+})
+const filterOptions = computed(() => [
+  { value: 'all' as const, label: `${t('admin.filter.all')} (${pending.value.length + live.value.length})` },
+  { value: 'pending' as const, label: `${t('admin.filter.pending')} (${pending.value.length})` },
+  { value: 'live' as const, label: `${t('admin.filter.live')} (${live.value.length})` },
+])
 
 const tabs = computed(() => {
-  const list: Array<{ id: Tab, label: string, count?: number }> = [
-    { id: 'queue', label: t('admin.tabs.queue'), count: pending.value.length },
-    { id: 'live', label: t('admin.tabs.live'), count: live.value.length },
+  const list: Array<{ id: Tab, label: string, count?: number, attention?: boolean }> = [
+    { id: 'questions', label: t('admin.tabs.questions'), count: pending.value.length + live.value.length, attention: pending.value.length > 0 },
     { id: 'answered', label: t('admin.tabs.answered'), count: answered.value.length },
     { id: 'declined', label: t('admin.tabs.declined'), count: declined.value.length },
     { id: 'share', label: t('admin.tabs.share') },
@@ -61,7 +80,7 @@ function confirmDelete(q: Question) {
 // tab is opened (after the basics). All of them can be replayed from the help menu.
 const tour = useTour()
 const adminTours = useAdminTours()
-const areaTours: Partial<Record<Tab, AdminTourId>> = { queue: 'queue', live: 'live', share: 'share', settings: 'settings' }
+const areaTours: Partial<Record<Tab, AdminTourId>> = { questions: 'questions', share: 'share', settings: 'settings' }
 const tourItems = computed(() => (role.value ? adminTours.menuItems(role.value) : []))
 
 function tourSteps(id: AdminTourId) {
@@ -79,29 +98,54 @@ async function afterRender() {
   await new Promise(resolve => setTimeout(resolve, 350))
 }
 
-// A sample question shown in an empty list while that list's tour runs, so the
-// tour can point at real-looking buttons instead of floating in the middle.
-const tourDemo = ref<'queue' | 'live' | null>(null)
-const demoQuestion = computed<Question>(() => ({
-  id: 'tour-demo',
-  content: t('tour.demoQuestion'),
-  animal: 'otter',
-  name: '',
-  votes: 3,
-  pinned: false,
-  answeredAt: null,
-  created: new Date().toISOString(),
-  status: 'pending',
-}))
+// Sample questions shown while the questions tour runs (when there is no real
+// waiting or live question yet), so the tour can point at real-looking buttons
+// instead of floating in the middle.
+const tourDemo = ref(false)
+const demoPending = computed(() => tourDemo.value && !!event.value?.moderation && !pending.value.length)
+const demoLive = computed(() => tourDemo.value && !live.value.length)
+function demoQuestion(status: 'pending' | 'approved'): Question {
+  return {
+    id: `tour-demo-${status}`,
+    content: t('tour.demoQuestion'),
+    animal: status === 'pending' ? 'otter' : 'owl',
+    name: '',
+    votes: 3,
+    pinned: false,
+    answeredAt: null,
+    created: new Date().toISOString(),
+    status,
+  }
+}
 
 async function runTour(id: AdminTourId, auto: boolean) {
   if (auto && (!tour.autoEnabled.value || tour.hasSeen(id))) return
-  const needsDemo = (id === 'queue' && !pending.value.length) || (id === 'live' && !live.value.length)
-  tourDemo.value = needsDemo ? id as 'queue' | 'live' : null
+  // The questions tour shows the full list (and restores this device's filter after).
+  const previousFilter = filter.value
+  if (id === 'questions') {
+    filter.value = 'all'
+    tourDemo.value = true
+  }
   await afterRender()
-  const options = { onClose: () => (tourDemo.value = null) }
+  const cleanup = () => {
+    if (id !== 'questions') return
+    tourDemo.value = false
+    filter.value = previousFilter
+  }
+  const options = {
+    onClose: () => {
+      cleanup()
+      // After the first-visit basics, go straight on to the open area's tour.
+      if (id === 'basics' && auto) runAreaTour()
+    },
+  }
   const started = auto ? tour.autoStart(id, tourSteps(id), options) : (tour.start(id, tourSteps(id), options), true)
-  if (!started) tourDemo.value = null
+  if (!started) cleanup()
+}
+
+function runAreaTour() {
+  const id = areaTours[tab.value]
+  if (id && tour.hasSeen('basics')) runTour(id, true)
 }
 
 async function startTour(id: string) {
@@ -118,13 +162,12 @@ function toggleAutoTours() {
 }
 
 watch(status, (value) => {
-  if (value === 'ready') runTour('basics', true)
+  if (value !== 'ready') return
+  if (tour.hasSeen('basics')) runAreaTour()
+  else runTour('basics', true)
 })
 
-watch(tab, (value) => {
-  const id = areaTours[value]
-  if (id && tour.hasSeen('basics')) runTour(id, true)
-})
+watch(tab, runAreaTour)
 </script>
 
 <template>
@@ -220,36 +263,50 @@ watch(tab, (value) => {
           <span
             v-if="item.count !== undefined"
             class="rounded-full px-2 text-sm tabular-nums"
-            :class="[tab === item.id ? 'bg-pink text-ink-deep' : 'bg-ink-soft', item.id === 'queue' && item.count ? '!bg-honey !text-white' : '']"
+            :class="[tab === item.id ? 'bg-pink text-ink-deep' : 'bg-ink-soft', item.attention ? '!bg-honey !text-white' : '']"
           >{{ item.count }}</span>
         </button>
       </nav>
 
       <div class="mt-4">
-        <!-- Queue -->
-        <div v-if="tab === 'queue'" class="space-y-3">
-          <p v-if="!event.moderation" class="rounded-xl bg-pink-wash px-4 py-3 text-sm text-ink-deep">{{ t('admin.moderationOffHint') }}</p>
-          <EmptyState v-if="!pending.length && tourDemo !== 'queue'" emoji="🧘" :title="t('admin.queueEmptyTitle')" :text="t('admin.queueEmptyText')" />
-          <QuestionCard v-if="tourDemo === 'queue' && !pending.length" :question="demoQuestion" :show-votes="false" demo data-tour="first-pending">
+        <!-- Questions: waiting and live in one list -->
+        <div v-if="tab === 'questions'" class="space-y-3">
+          <SegmentedControl v-model="filter" :label="t('admin.filter.label')" :options="filterOptions" data-tour="question-filter" />
+          <p v-if="!event.moderation && filter !== 'live'" class="rounded-xl bg-pink-wash px-4 py-3 text-sm text-ink-deep">{{ t('admin.moderationOffHint') }}</p>
+          <template v-if="!shown.length && !tourDemo">
+            <EmptyState v-if="filter === 'pending'" emoji="🧘" :title="t('admin.queueEmptyTitle')" :text="t('admin.queueEmptyText')" />
+            <EmptyState v-else emoji="🦗" :title="t('admin.liveEmptyTitle')" :text="filter === 'all' ? t('admin.allEmptyText') : t('admin.liveEmptyText')" />
+          </template>
+          <QuestionCard v-if="demoPending" :question="demoQuestion('pending')" :show-votes="false" demo data-tour="first-pending">
             <template #actions>
               <AppButton size="sm" variant="success" tabindex="-1"><CheckIcon />{{ t('admin.approve') }}</AppButton>
               <AppButton size="sm" variant="danger" tabindex="-1"><XMarkIcon />{{ t('admin.reject') }}</AppButton>
             </template>
           </QuestionCard>
           <TransitionGroup name="list" tag="div" class="relative space-y-3">
-            <QuestionCard v-for="(q, i) in pending" :key="q.id" :question="q" :show-votes="false" :data-tour="i === 0 ? 'first-pending' : undefined">
+            <QuestionCard
+              v-for="q in shown"
+              :key="q.id"
+              :question="q"
+              :show-votes="q.status !== 'pending'"
+              :spotlight="q.id === event.spotlight"
+              :data-tour="q.id === pending[0]?.id ? 'first-pending' : q.id === live[0]?.id ? 'first-live' : undefined"
+            >
               <template #actions>
-                <AppButton size="sm" variant="success" @click="questionAction(q, 'approve')"><CheckIcon />{{ t('admin.approve') }}</AppButton>
-                <AppButton size="sm" variant="danger" @click="questionAction(q, 'reject')"><XMarkIcon />{{ t('admin.reject') }}</AppButton>
+                <template v-if="q.status === 'pending'">
+                  <AppButton size="sm" variant="success" @click="questionAction(q, 'approve')"><CheckIcon />{{ t('admin.approve') }}</AppButton>
+                  <AppButton size="sm" variant="danger" @click="questionAction(q, 'reject')"><XMarkIcon />{{ t('admin.reject') }}</AppButton>
+                </template>
+                <template v-else>
+                  <AppButton v-if="q.id !== event.spotlight" size="sm" variant="primary" @click="questionAction(q, 'spotlight')"><MicrophoneIcon />{{ t('admin.spotlight') }}</AppButton>
+                  <AppButton size="sm" variant="success" @click="questionAction(q, 'answer')"><CheckCircleIcon />{{ t('admin.markAnswered') }}</AppButton>
+                  <AppButton size="sm" variant="soft" @click="questionAction(q, q.pinned ? 'unpin' : 'pin')"><StarIcon />{{ q.pinned ? t('admin.unpin') : t('admin.pin') }}</AppButton>
+                  <AppButton size="sm" variant="ghost" @click="questionAction(q, 'reject')"><XMarkIcon />{{ t('admin.hide') }}</AppButton>
+                </template>
               </template>
             </QuestionCard>
           </TransitionGroup>
-        </div>
-
-        <!-- Live -->
-        <div v-else-if="tab === 'live'">
-          <EmptyState v-if="!live.length && tourDemo !== 'live'" emoji="🦗" :title="t('admin.liveEmptyTitle')" :text="t('admin.liveEmptyText')" />
-          <QuestionCard v-if="tourDemo === 'live' && !live.length" :question="demoQuestion" demo data-tour="first-live">
+          <QuestionCard v-if="demoLive" :question="demoQuestion('approved')" demo data-tour="first-live">
             <template #actions>
               <AppButton size="sm" variant="primary" tabindex="-1"><MicrophoneIcon />{{ t('admin.spotlight') }}</AppButton>
               <AppButton size="sm" variant="success" tabindex="-1"><CheckCircleIcon />{{ t('admin.markAnswered') }}</AppButton>
@@ -257,16 +314,6 @@ watch(tab, (value) => {
               <AppButton size="sm" variant="ghost" tabindex="-1"><XMarkIcon />{{ t('admin.hide') }}</AppButton>
             </template>
           </QuestionCard>
-          <TransitionGroup name="list" tag="div" class="relative space-y-3">
-            <QuestionCard v-for="(q, i) in live" :key="q.id" :question="q" :spotlight="q.id === event.spotlight" :data-tour="i === 0 ? 'first-live' : undefined">
-              <template #actions>
-                <AppButton v-if="q.id !== event.spotlight" size="sm" variant="primary" @click="questionAction(q, 'spotlight')"><MicrophoneIcon />{{ t('admin.spotlight') }}</AppButton>
-                <AppButton size="sm" variant="success" @click="questionAction(q, 'answer')"><CheckCircleIcon />{{ t('admin.markAnswered') }}</AppButton>
-                <AppButton size="sm" variant="soft" @click="questionAction(q, q.pinned ? 'unpin' : 'pin')"><StarIcon />{{ q.pinned ? t('admin.unpin') : t('admin.pin') }}</AppButton>
-                <AppButton size="sm" variant="ghost" @click="questionAction(q, 'reject')"><XMarkIcon />{{ t('admin.hide') }}</AppButton>
-              </template>
-            </QuestionCard>
-          </TransitionGroup>
         </div>
 
         <!-- Answered -->

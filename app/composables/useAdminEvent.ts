@@ -1,3 +1,4 @@
+import { toast } from 'vue-sonner'
 import type { AdminEvent, Question, RealtimeMessage, Role } from '~/utils/types'
 
 type Status = 'loading' | 'ready' | 'no_access' | 'not_found' | 'error'
@@ -7,6 +8,7 @@ type Status = 'loading' | 'ready' | 'no_access' | 'not_found' | 'error'
 // from being logged in as the event's owner.
 export function useAdminEvent(code: string, hooks: { onNewPending?: (question: Question) => void } = {}) {
   const api = useApi()
+  const { t } = useI18n()
   const showError = useErrorToast()
   const saved = useSavedEvents()
   const realtime = useRealtime()
@@ -109,17 +111,26 @@ export function useAdminEvent(code: string, hooks: { onNewPending?: (question: Q
 
   // --- actions ----------------------------------------------------------------------
 
+  // Decisions send the status this moderator saw (`expect`). If someone else
+  // was quicker, the server refuses and returns the question as it is now.
   async function questionAction(question: Question, action: string) {
+    const decides = ['approve', 'reject', 'restore'].includes(action)
     try {
       const result = await api.post<{ question?: Question, event?: AdminEvent, deleted?: string }>(
         `/events/${code}/admin/questions/${question.id}`,
-        { action },
+        { action, ...(decides && question.status ? { expect: question.status } : {}) },
         { key: key.value },
       )
       if (result.deleted) questions.value = remove(questions.value, result.deleted)
       if (result.question) questions.value = upsert(questions.value, result.question)
       if (result.event) event.value = result.event
     } catch (err) {
+      if (err instanceof ApiError && err.code === 'question_already_handled' && err.data.question) {
+        questions.value = upsert(questions.value, err.data.question as Question)
+        toast(t('errors.question_already_handled'), { id: `handled-${question.id}` })
+        return
+      }
+      if (err instanceof ApiError && err.code === 'question_not_found') questions.value = remove(questions.value, question.id)
       showError(err)
     }
   }

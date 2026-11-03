@@ -78,3 +78,17 @@ export function welcomeFlag(code: string) {
     set: () => write(`askaway:welcomed:${code}`, true),
   }
 }
+
+export type QuestionFilter = 'all' | 'pending' | 'live'
+
+// Which questions the moderation list shows on this device. Teams split the
+// work by filter (one person screens «waiting», another runs «live»).
+export function questionFilter() {
+  return {
+    get: (): QuestionFilter => {
+      const value = read<string>('askaway:question-filter', 'all')
+      return value === 'pending' || value === 'live' ? value : 'all'
+    },
+    set: (value: QuestionFilter) => write('askaway:question-filter', value),
+  }
+}

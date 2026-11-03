@@ -30,12 +30,22 @@ function show(e) {
   }
 }
 
-// POST /api/askaway/events/{code}/admin/questions/{id}  { action }
+const QUESTION_ACTIONS = ["approve", "reject", "restore", "answer", "unanswer",
+  "pin", "unpin", "spotlight", "unspotlight", "delete"]
+const STATUS_ACTIONS = ["approve", "reject", "restore"]
+
+// POST /api/askaway/events/{code}/admin/questions/{id}  { action, expect? }
+// `expect` is the status the moderator saw. When several moderators decide on
+// the same question at once, the first decision wins and the others get
+// 409 question_already_handled with the current question.
 function questionAction(e) {
   const { event, code } = context(e)
-  const q = questions.findQuestion(event, e.request.pathValue("id"))
-  const action = h.str(h.body(e).action)
-  const wasVisible = q.getString("status") === "approved"
+  let q = questions.findQuestion(event, e.request.pathValue("id"))
+  const b = h.body(e)
+  const action = h.str(b.action)
+  const expect = h.str(b.expect)
+  if (QUESTION_ACTIONS.indexOf(action) === -1) h.fail(400, "unknown_action")
+  let wasVisible = q.getString("status") === "approved"
   let eventChanged = false
 
   const clearSpotlight = () => {
@@ -45,58 +55,76 @@ function questionAction(e) {
     }
   }
 
-  switch (action) {
-    case "approve":
-      q.set("status", "approved")
-      if (!q.getString("approved_at")) q.set("approved_at", h.now())
-      break
-    case "reject":
-      q.set("status", "rejected")
-      q.set("pinned", false)
-      clearSpotlight()
-      break
-    case "restore":
-      q.set("status", "pending")
-      break
-    case "answer":
-      q.set("answered_at", h.now())
-      q.set("pinned", false)
-      clearSpotlight()
-      break
-    case "unanswer":
-      q.set("answered_at", "")
-      break
-    case "pin":
-      q.set("pinned", true)
-      break
-    case "unpin":
-      q.set("pinned", false)
-      break
-    case "spotlight":
-      if (q.getString("status") !== "approved") h.fail(409, "question_not_approved")
-      if (q.getString("answered_at")) q.set("answered_at", "")
-      event.set("spotlight", q.id)
-      eventChanged = true
-      break
-    case "unspotlight":
-      clearSpotlight()
-      break
-    case "delete": {
-      const id = q.id
-      clearSpotlight()
-      if (eventChanged) $app.save(event)
-      $app.delete(q)
-      if (eventChanged) announceEvent(code, event)
-      if (wasVisible) questions.announceRemoved(code, id)
-      else realtime.broadcast(code, null, { type: "question_removed", id })
-      return { deleted: id }
-    }
-    default:
-      h.fail(400, "unknown_action")
+  if (action === "delete") {
+    const id = q.id
+    clearSpotlight()
+    if (eventChanged) $app.save(event)
+    $app.delete(q)
+    if (eventChanged) announceEvent(code, event)
+    if (wasVisible) questions.announceRemoved(code, id)
+    else realtime.broadcast(code, null, { type: "question_removed", id })
+    return { deleted: id }
   }
 
-  $app.save(q)
-  if (eventChanged) $app.save(event)
+  // Check and save in one transaction so two simultaneous decisions can't
+  // both pass the check. Errors thrown in here would surface as Go errors,
+  // so a refusal is recorded and raised afterwards.
+  let refused = null
+  $app.runInTransaction((tx) => {
+    q = tx.findRecordById("questions", q.id)
+    const status = q.getString("status")
+    wasVisible = status === "approved"
+    if (expect && STATUS_ACTIONS.indexOf(action) !== -1 && status !== expect) {
+      refused = "question_already_handled"
+      return
+    }
+
+    switch (action) {
+      case "approve":
+        q.set("status", "approved")
+        if (!q.getString("approved_at")) q.set("approved_at", h.now())
+        break
+      case "reject":
+        q.set("status", "rejected")
+        q.set("pinned", false)
+        clearSpotlight()
+        break
+      case "restore":
+        q.set("status", "pending")
+        break
+      case "answer":
+        q.set("answered_at", h.now())
+        q.set("pinned", false)
+        clearSpotlight()
+        break
+      case "unanswer":
+        q.set("answered_at", "")
+        break
+      case "pin":
+        q.set("pinned", true)
+        break
+      case "unpin":
+        q.set("pinned", false)
+        break
+      case "spotlight":
+        if (status !== "approved") {
+          refused = "question_not_approved"
+          return
+        }
+        if (q.getString("answered_at")) q.set("answered_at", "")
+        event.set("spotlight", q.id)
+        eventChanged = true
+        break
+      case "unspotlight":
+        clearSpotlight()
+        break
+    }
+
+    tx.save(q)
+    if (eventChanged) tx.save(event)
+  })
+  if (refused) h.fail(409, refused, { question: h.modQuestion(q) })
+
   questions.announce(code, q, wasVisible)
   if (eventChanged) announceEvent(code, event)
   return { question: h.modQuestion(q), event: h.adminEvent(event) }
