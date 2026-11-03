@@ -7,7 +7,10 @@ ARG POCKETBASE_VERSION=0.40.5
 ARG NODE_VERSION=24
 
 # --- 1. Build the frontend -----------------------------------------------------------
-FROM node:${NODE_VERSION}-alpine AS web
+# The built SPA is plain HTML/JS/CSS, the same for every platform, so build it
+# once on the machine's own platform. Running Node under QEMU emulation (arm64
+# on GitHub's x86 runners) is slow and can crash with "Illegal instruction".
+FROM --platform=$BUILDPLATFORM node:${NODE_VERSION}-alpine AS web
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts
